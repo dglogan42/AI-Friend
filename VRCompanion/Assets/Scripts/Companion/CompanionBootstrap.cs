@@ -50,12 +50,7 @@ namespace VRCompanion
             var companionGo = new GameObject("Companion");
             companionGo.transform.position = new Vector3(0f, 0f, 1.5f);
 
-            var body = CreatePrimitive(PrimitiveType.Capsule, "Body", companionGo.transform, new Vector3(0f, 1f, 0f), Vector3.one, new Color(0.9f, 0.75f, 0.7f));
-            var earL = CreatePrimitive(PrimitiveType.Cube, "EarL", companionGo.transform, new Vector3(-0.25f, 1.85f, 0f), new Vector3(0.18f, 0.28f, 0.1f), new Color(0.95f, 0.7f, 0.75f));
-            var earR = CreatePrimitive(PrimitiveType.Cube, "EarR", companionGo.transform, new Vector3(0.25f, 1.85f, 0f), new Vector3(0.18f, 0.28f, 0.1f), new Color(0.95f, 0.7f, 0.75f));
-            earL.transform.rotation = Quaternion.Euler(0f, 0f, 15f);
-            earR.transform.rotation = Quaternion.Euler(0f, 0f, -15f);
-
+            var body = CreateCharacter(companionGo.transform);
             var expression = body.AddComponent<ExpressionController>();
             var dialogue = companionGo.AddComponent<DialogueService>();
             var asr = companionGo.AddComponent<StubAsrService>();
@@ -69,6 +64,7 @@ namespace VRCompanion
 
             companionGo.AddComponent<SingingRaterService>();
             companionGo.AddComponent<KinectBodyTrackingSource>();
+            companionGo.AddComponent<WebcamBodyTrackingSource>();
             CreateSingingVisualizer(companionGo.transform);
 
             var switcherGo = new GameObject("SceneSwitcher");
@@ -117,11 +113,36 @@ namespace VRCompanion
             lightGo.transform.rotation = Quaternion.Euler(50f, -30f, 0f);
         }
 
+        /// <summary>
+        /// Instantiates the real "Cat-ears Girl" VRM character (Assets/Resources/Characters/
+        /// CatEarsGirl), or falls back to a primitive capsule + ear cubes if it's missing
+        /// (e.g. stripped from a minimal build).
+        /// </summary>
+        static GameObject CreateCharacter(Transform parent)
+        {
+            var prefab = Resources.Load<GameObject>("Characters/CatEarsGirl/CatEarsGirl");
+            if (prefab != null)
+            {
+                var character = Instantiate(prefab, parent);
+                character.name = "Body";
+                character.transform.localPosition = Vector3.zero;
+                character.transform.localRotation = Quaternion.identity;
+                return character;
+            }
+
+            var body = CreatePrimitive(PrimitiveType.Capsule, "Body", parent, new Vector3(0f, 1f, 0f), Vector3.one, new Color(0.9f, 0.75f, 0.7f));
+            var earL = CreatePrimitive(PrimitiveType.Cube, "EarL", parent, new Vector3(-0.25f, 1.85f, 0f), new Vector3(0.18f, 0.28f, 0.1f), new Color(0.95f, 0.7f, 0.75f));
+            var earR = CreatePrimitive(PrimitiveType.Cube, "EarR", parent, new Vector3(0.25f, 1.85f, 0f), new Vector3(0.18f, 0.28f, 0.1f), new Color(0.95f, 0.7f, 0.75f));
+            earL.transform.rotation = Quaternion.Euler(0f, 0f, 15f);
+            earR.transform.rotation = Quaternion.Euler(0f, 0f, -15f);
+            return body;
+        }
+
         static void CreateSingingVisualizer(Transform companion)
         {
             var go = new GameObject("SingingVisualizer");
             go.transform.SetParent(companion, false);
-            go.transform.localPosition = new Vector3(0f, 2.1f, 0f);
+            go.transform.localPosition = new Vector3(0f, 1.7f, 0f); // ~CatEarsGirl's 1.456m height + headroom
 
             var line = go.AddComponent<LineRenderer>();
             var mat = new Material(Shader.Find("Universal Render Pipeline/Unlit") ?? Shader.Find("Sprites/Default"));

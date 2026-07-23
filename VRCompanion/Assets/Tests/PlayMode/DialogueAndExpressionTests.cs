@@ -78,5 +78,51 @@ namespace VRCompanion.Tests
 
             Object.Destroy(cube);
         }
+
+        [Test]
+        public void FaceExpressionShapes_ShapeFor_AllExpressionIds_ReturnsKnownShape()
+        {
+            var known = new HashSet<string>(FaceExpressionShapes.AllShapes);
+            foreach (ExpressionId id in System.Enum.GetValues(typeof(ExpressionId)))
+            {
+                string shape = FaceExpressionShapes.ShapeFor(id);
+                Assert.IsTrue(known.Contains(shape), $"{id} mapped to unrecognized shape '{shape}'.");
+            }
+        }
+
+        [UnityTest]
+        public IEnumerator ExpressionController_WithFaceMesh_DrivesBlendShapeWeightsInsteadOfColor()
+        {
+            var go = new GameObject("FaceMeshTest");
+            var mesh = new Mesh();
+            mesh.vertices = new[] { Vector3.zero, Vector3.right, Vector3.up };
+            mesh.triangles = new[] { 0, 1, 2 };
+            foreach (var shape in FaceExpressionShapes.AllShapes)
+                mesh.AddBlendShapeFrame(shape, 100f, new Vector3[3], null, null);
+
+            var smr = go.AddComponent<SkinnedMeshRenderer>();
+            smr.sharedMesh = mesh;
+
+            var controller = go.AddComponent<ExpressionController>();
+            yield return null;
+
+            controller.SetExpression(ExpressionId.Happy, 1f);
+
+            // Wait on simulated time, not a fixed frame count: the exponential blend's
+            // convergence rate depends on Time.deltaTime, which varies in batchmode.
+            float elapsed = 0f;
+            while (elapsed < 2f)
+            {
+                elapsed += Time.deltaTime;
+                yield return null;
+            }
+
+            int joyIndex = mesh.GetBlendShapeIndex(FaceExpressionShapes.Joy);
+            int neutralIndex = mesh.GetBlendShapeIndex(FaceExpressionShapes.Neutral);
+            Assert.Greater(smr.GetBlendShapeWeight(joyIndex), 90f, "Happy should drive the Joy shape near full weight.");
+            Assert.Less(smr.GetBlendShapeWeight(neutralIndex), 10f, "Happy at full intensity should leave Neutral near zero.");
+
+            Object.Destroy(go);
+        }
     }
 }

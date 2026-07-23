@@ -22,8 +22,12 @@ namespace VRCompanion.Body
     ///      up here): libfreenect2 only exposes raw depth/color/IR streams — it does
     ///      NOT compute a skeleton. Real body tracking on Linux would need a
     ///      separate layer on top (e.g. NuiTrack, a paid third-party middleware, or
-    ///      a custom pose-estimation model over the depth/RGB frames — similar in
-    ///      spirit to how WebcamFaceTrackingSource uses MediaPipe for faces).
+    ///      a custom pose-estimation model over the depth/RGB frames).
+    ///
+    /// This is that separate layer, minus the Kinect hardware: see
+    /// <see cref="WebcamBodyTrackingSource"/>, which uses MediaPipe Pose over an
+    /// ordinary webcam (Tools/BodyTracking/webcam_body_tracker.py) to fill the same
+    /// BodyJoint set this stub would if real Kinect hardware/SDK were available.
     ///
     /// IsAvailable always reports false here, so this is a safe no-op either way.
     /// </summary>

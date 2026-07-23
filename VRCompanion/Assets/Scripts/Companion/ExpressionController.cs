@@ -4,17 +4,20 @@ using VRCompanion.Speech;
 namespace VRCompanion
 {
     /// <summary>
-    /// Drives a simple visual stand-in for companion expressions.
-    /// Replace material tint / blend shapes with a real character later.
+    /// Drives companion expressions: real VRM face blend shapes when a compatible
+    /// SkinnedMeshRenderer is present (see <see cref="FaceExpressionShapes"/>), falling
+    /// back to a material color tint for the primitive stand-in otherwise.
     /// </summary>
     public sealed class ExpressionController : MonoBehaviour
     {
         [SerializeField] Renderer targetRenderer;
+        [SerializeField] SkinnedMeshRenderer faceMesh;
         [SerializeField] float blendSpeed = 6f;
 
         ExpressionState _current = ExpressionState.Neutral;
         ExpressionState _target = ExpressionState.Neutral;
         MaterialPropertyBlock _block;
+        int[] _faceShapeIndices;
         static readonly int BaseColorId = Shader.PropertyToID("_BaseColor");
         static readonly int ColorId = Shader.PropertyToID("_Color");
 
@@ -25,6 +28,25 @@ namespace VRCompanion
             _block = new MaterialPropertyBlock();
             if (targetRenderer == null)
                 targetRenderer = GetComponentInChildren<Renderer>();
+            if (faceMesh == null)
+                faceMesh = FindFaceMesh();
+
+            if (faceMesh != null)
+            {
+                _faceShapeIndices = new int[FaceExpressionShapes.AllShapes.Length];
+                for (int i = 0; i < _faceShapeIndices.Length; i++)
+                    _faceShapeIndices[i] = faceMesh.sharedMesh.GetBlendShapeIndex(FaceExpressionShapes.AllShapes[i]);
+            }
+        }
+
+        SkinnedMeshRenderer FindFaceMesh()
+        {
+            foreach (var smr in GetComponentsInChildren<SkinnedMeshRenderer>(true))
+            {
+                if (smr.sharedMesh != null && smr.sharedMesh.GetBlendShapeIndex(FaceExpressionShapes.Neutral) >= 0)
+                    return smr;
+            }
+            return null;
         }
 
         void Update()
@@ -48,9 +70,9 @@ namespace VRCompanion
 
         /// <summary>
         /// Approximates a discrete ExpressionId from continuous live blendshapes
-        /// (webcam/MediaPipe or, later, VIVE facial tracking). Placeholder mapping
-        /// until the primitive stand-in is replaced by a real blendshape-driven mesh,
-        /// at which point this should drive skinned-mesh blendshapes directly instead.
+        /// (webcam/MediaPipe or, later, VIVE facial tracking), then routes it through
+        /// the same SetExpression path used everywhere else — which now drives the
+        /// VRM face mesh's blend shapes directly when one is present.
         /// </summary>
         public void ApplyBlendshapeFrame(FaceBlendshapeFrame frame)
         {
@@ -100,6 +122,35 @@ namespace VRCompanion
         }
 
         void ApplyVisual(ExpressionState state)
+        {
+            if (faceMesh != null)
+                ApplyFaceBlendShapes(state);
+            else
+                ApplyColorTint(state);
+        }
+
+        void ApplyFaceBlendShapes(ExpressionState state)
+        {
+            string targetShape = FaceExpressionShapes.ShapeFor(state.Id);
+            bool targetIsNeutral = targetShape == FaceExpressionShapes.Neutral;
+            float targetWeight = targetIsNeutral ? 100f : state.Intensity * 100f;
+            float neutralWeight = targetIsNeutral ? 0f : (1f - state.Intensity) * 100f;
+
+            for (int i = 0; i < _faceShapeIndices.Length; i++)
+            {
+                int index = _faceShapeIndices[i];
+                if (index < 0)
+                    continue;
+
+                string shape = FaceExpressionShapes.AllShapes[i];
+                float weight = shape == targetShape ? targetWeight
+                    : shape == FaceExpressionShapes.Neutral ? neutralWeight
+                    : 0f;
+                faceMesh.SetBlendShapeWeight(index, weight);
+            }
+        }
+
+        void ApplyColorTint(ExpressionState state)
         {
             if (targetRenderer == null)
                 return;

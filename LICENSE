@@ -23,10 +23,11 @@ SOFTWARE.
 ---
 
 This license covers the code in this repository only. It does NOT cover the
-character model under `VRCompanionAvatar/Assets/Characters/CatEarsGirl/`,
-which is owned by its creator 莲子酱 and used under the usage conditions set
-on its VRoid Hub page (Avatar Use, Redistribution, and Alterations all
-Allow, no attribution required) — those are the creator's own terms, tied to
-that specific model page, and are not ours to relicense. See
-`VRCompanionAvatar/README.md` for the full breakdown, including the separate
-VRChat SDK license/EULA governing `Packages/com.vrchat.*`.
+character model — present in two copies, `VRCompanionAvatar/Assets/Characters/CatEarsGirl/`
+and `VRCompanion/Assets/Resources/Characters/CatEarsGirl/` — which is owned by its creator
+莲子酱 and used under the usage conditions set on its VRoid Hub page (Avatar Use,
+Redistribution, and Alterations all Allow, no attribution required) — those are the
+creator's own terms, tied to that specific model page, and are not ours to relicense. See
+`VRCompanionAvatar/README.md` for the full breakdown, including the separate VRChat SDK
+license/EULA governing `Packages/com.vrchat.*` (VRChat SDK packages are not used by
+`VRCompanion`).
