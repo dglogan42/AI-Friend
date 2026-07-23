@@ -1,0 +1,15 @@
+# Claude Code local session config (machine-specific, not project source)
+.claude/
+
+# Saved browser pages — not project content
+index.html
+claude extension.html
+Cat-ears Girl Cat-ears Girl - VRoid Hub.html
+Cat-ears Girl Cat-ears Girl - VRoid Hub_files/
+unity.txt
+
+# Secrets — never commit API keys (see ~/.vrcompanion/secrets/ instead)
+*API*.txt
+*api_key*
+*.env
+secrets/

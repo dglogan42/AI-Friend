@@ -1,0 +1,2 @@
+Kimi AI (K3) built a VR companion in ~30 min: listens, replies, shows expressions, switches scenes (café/shop). Used 3D model + one prompt; auto-handled ASR/TTS, LLM, scenes, Android debugging via ADB, and parallel agent swarm for refinements.
+Install Kimi Code CLI (GitHub: MoonshotAI/kimi-code), get Moonshot API key, start new Unity VR project, give K3 prompt like "Build VR companion like Tien: cat-eared, listens/replies with expressions, café/shop scenes using local ASR/TTS." Let it run 95+ steps autonomously
