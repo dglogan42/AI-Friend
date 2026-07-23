@@ -5,21 +5,26 @@ using VRCompanion.Speech;
 using VRCompanion.Singing;
 using VRCompanion.Body;
 using VRCompanion.Vision;
-using VRCompanion.PhysicsTuning;
 using VRCompanion.Diagnostics;
 using VRCompanion.Content;
 using VRCompanion.Outfits;
 using VRCompanion.Intimacy;
+using VRCompanion.Characters;
 
 namespace VRCompanion
 {
     /// <summary>
     /// Builds a playable stub scene at runtime if the hierarchy was empty:
-    /// floor, three location props, companion capsule, XR camera, services.
+    /// floor, location props, companion body (female CatEarsGirl or male CatEarsBoy),
+    /// XR camera, services.
     /// </summary>
     public sealed class CompanionBootstrap : MonoBehaviour
     {
         [SerializeField] bool buildIfEmpty = true;
+
+        [Header("Character")]
+        [Tooltip("Default companion gender. Overridden by VRCOMPANION_GENDER env or PlayerPrefs.")]
+        [SerializeField] CompanionGender defaultGender = CompanionGender.Female;
 
         void Awake()
         {
@@ -35,13 +40,13 @@ namespace VRCompanion
         [ContextMenu("Build Stub Scene")]
         public void Build()
         {
-            PhysicsTuning.ApplyProjectDefaults();
+            CompanionPhysics.ApplyProjectDefaults();
             EnsureCamera();
             EnsureLight();
 
             var world = new GameObject("World");
             var floor = CreatePrimitive(PrimitiveType.Plane, "Floor", world.transform, Vector3.zero, new Vector3(2f, 1f, 2f), new Color(0.25f, 0.27f, 0.3f));
-            PhysicsTuning.ConfigureCollider(floor, isStatic: true);
+            CompanionPhysics.ConfigureCollider(floor, isStatic: true);
 
             var locationsRoot = new GameObject("Locations");
             locationsRoot.transform.SetParent(world.transform, false);
@@ -52,19 +57,19 @@ namespace VRCompanion
             var privateRoom = CreateLocation("Private", locationsRoot.transform, new Color(0.45f, 0.2f, 0.35f), new Vector3(0f, 0.5f, -2.5f));
             // Soft ambient prop for private space
             var bed = CreatePrimitive(PrimitiveType.Cube, "Daybed", privateRoom.transform, new Vector3(0f, 0.25f, 0f), new Vector3(1.6f, 0.35f, 0.9f), new Color(0.55f, 0.25f, 0.4f));
-            PhysicsTuning.ConfigureCollider(bed, isStatic: true);
+            CompanionPhysics.ConfigureCollider(bed, isStatic: true);
 
             // Simple props for flavour — static colliders so they stay put in VR.
             var table = CreatePrimitive(PrimitiveType.Cylinder, "CafeTable", cafe.transform, new Vector3(0f, 0.4f, 0f), new Vector3(0.8f, 0.4f, 0.8f), new Color(0.4f, 0.25f, 0.15f));
-            PhysicsTuning.ConfigureCollider(table, isStatic: true);
+            CompanionPhysics.ConfigureCollider(table, isStatic: true);
             var counter = CreatePrimitive(PrimitiveType.Cube, "ShopCounter", shop.transform, new Vector3(0f, 0.5f, 0f), new Vector3(1.4f, 1f, 0.5f), new Color(0.45f, 0.4f, 0.3f));
-            PhysicsTuning.ConfigureCollider(counter, isStatic: true);
+            CompanionPhysics.ConfigureCollider(counter, isStatic: true);
             var sign = CreatePrimitive(PrimitiveType.Cube, "HubSign", hub.transform, new Vector3(0f, 1.2f, 0f), new Vector3(1.2f, 0.3f, 0.1f), new Color(0.7f, 0.75f, 0.9f));
-            PhysicsTuning.ConfigureCollider(sign, isStatic: true);
+            CompanionPhysics.ConfigureCollider(sign, isStatic: true);
 
             // Small dynamic prop for physics smoke testing in Play Mode.
             var ball = CreatePrimitive(PrimitiveType.Sphere, "PhysicsBall", hub.transform, new Vector3(0.4f, 1.6f, 0.2f), Vector3.one * 0.12f, new Color(0.9f, 0.3f, 0.25f));
-            PhysicsTuning.ConfigureCollider(ball, isStatic: false, mass: 0.2f);
+            CompanionPhysics.ConfigureCollider(ball, isStatic: false, mass: 0.2f);
 
             var companionGo = new GameObject("Companion");
             companionGo.transform.position = new Vector3(0f, 0f, 1.5f);
@@ -72,7 +77,11 @@ namespace VRCompanion
             // Intimacy + NSFW allowed by default (Inspector can disable for SFW demos).
             companionGo.AddComponent<CompanionContentSettings>();
 
-            var body = CreateCharacter(companionGo.transform);
+            var profile = companionGo.AddComponent<CompanionCharacterProfile>();
+            profile.Gender = CompanionCharacterProfile.ResolveStartupGender(defaultGender);
+            profile.SavePreference();
+
+            var body = CreateCharacter(companionGo.transform, profile);
             var expression = body.AddComponent<ExpressionController>();
             var dialogue = companionGo.AddComponent<DialogueService>();
             var asr = companionGo.AddComponent<StubAsrService>();
@@ -93,7 +102,7 @@ namespace VRCompanion
             companionGo.AddComponent<WebcamBodyTrackingSource>();
             companionGo.AddComponent<WebcamImageRecognitionSource>();
             companionGo.AddComponent<CompanionDiagnosticsHud>();
-            CreateSingingVisualizer(companionGo.transform);
+            CreateSingingVisualizer(companionGo.transform, profile.ApproximateHeight);
 
             var switcherGo = new GameObject("SceneSwitcher");
             var switcher = switcherGo.AddComponent<SceneSwitcher>();
@@ -112,7 +121,7 @@ namespace VRCompanion
             controller.enabled = false;
             controller.enabled = true;
 
-            Debug.Log("[CompanionBootstrap] Stub scene ready. Press Space in Play Mode to talk.");
+            Debug.Log($"[CompanionBootstrap] Stub scene ready ({profile.DisplayName}). Press Space to talk, G to switch gender, O for outfits.");
         }
 
         static void EnsureCamera()
@@ -143,35 +152,138 @@ namespace VRCompanion
         }
 
         /// <summary>
-        /// Instantiates the real "Cat-ears Girl" VRM character (Assets/Resources/Characters/
-        /// CatEarsGirl), or falls back to a primitive capsule + ear cubes if it's missing
-        /// (e.g. stripped from a minimal build).
+        /// Instantiates the selected character:
+        /// female → CatEarsGirl Resources prefab;
+        /// male → CatEarsBoy prefab, else runtime-loaded Yellow.vrm from disk, else yellow stand-in.
         /// </summary>
-        static GameObject CreateCharacter(Transform parent)
+        public static GameObject CreateCharacter(Transform parent, CompanionCharacterProfile profile)
         {
-            var prefab = Resources.Load<GameObject>("Characters/CatEarsGirl/CatEarsGirl");
+            if (profile == null)
+            {
+                var fallback = CreatePrimitiveStandIn(parent, CompanionGender.Female);
+                fallback.name = "Body";
+                return fallback;
+            }
+
+            var prefab = Resources.Load<GameObject>(profile.ResourcesPath);
             if (prefab != null)
             {
-                var character = Instantiate(prefab, parent);
+                var character = Object.Instantiate(prefab, parent);
                 character.name = "Body";
                 character.transform.localPosition = Vector3.zero;
                 character.transform.localRotation = Quaternion.identity;
+                Debug.Log($"[CompanionBootstrap] Loaded prefab body from Resources/{profile.ResourcesPath}");
                 return character;
             }
 
-            var body = CreatePrimitive(PrimitiveType.Capsule, "Body", parent, new Vector3(0f, 1f, 0f), Vector3.one, new Color(0.9f, 0.75f, 0.7f));
-            var earL = CreatePrimitive(PrimitiveType.Cube, "EarL", parent, new Vector3(-0.25f, 1.85f, 0f), new Vector3(0.18f, 0.28f, 0.1f), new Color(0.95f, 0.7f, 0.75f));
-            var earR = CreatePrimitive(PrimitiveType.Cube, "EarR", parent, new Vector3(0.25f, 1.85f, 0f), new Vector3(0.18f, 0.28f, 0.1f), new Color(0.95f, 0.7f, 0.75f));
-            earL.transform.rotation = Quaternion.Euler(0f, 0f, 15f);
-            earR.transform.rotation = Quaternion.Euler(0f, 0f, -15f);
-            return body;
+            // Male: load "Yellow" VRM from disk (not redistributable — user-downloaded).
+            if (profile.IsMale)
+            {
+                var fromDisk = VrmRuntimeLoader.TryLoadMaleVrm(parent);
+                if (fromDisk != null)
+                {
+                    Debug.Log(
+                        $"[CompanionBootstrap] Male body: {CompanionCharacterProfile.MaleModelTitle} " +
+                        $"by {CompanionCharacterProfile.MaleModelCreator} " +
+                        $"(credit required; {CompanionCharacterProfile.MaleModelSourceUrl})");
+                    return fromDisk;
+                }
+            }
+
+            Debug.LogWarning(
+                $"[CompanionBootstrap] No prefab/VRM for {profile.DisplayName} — " +
+                "using procedural stand-in. See Assets/Resources/Characters/CatEarsBoy/README.md");
+            var go = CreatePrimitiveStandIn(parent, profile.Gender);
+            go.name = "Body";
+            return go;
         }
 
-        static void CreateSingingVisualizer(Transform companion)
+        /// <summary>
+        /// Gender-styled capsule stand-in: female is peach/pink cat-ears; male matches
+        /// Yellow (blonde / school-vest gold) until the real VRM is placed on disk.
+        /// </summary>
+        public static GameObject CreatePrimitiveStandIn(Transform parent, CompanionGender gender)
+        {
+            bool male = gender == CompanionGender.Male;
+            // Male: slightly taller + broader; female: original proportions.
+            float bodyY = male ? 1.05f : 1.0f;
+            float bodyScaleY = male ? 1.12f : 1.0f;
+            float bodyScaleX = male ? 1.08f : 1.0f;
+            float hairY = male ? 2.0f : 1.85f;
+            float hairX = male ? 0.22f : 0.25f;
+
+            var skin = male
+                ? new Color(0.96f, 0.88f, 0.8f)
+                : new Color(0.9f, 0.75f, 0.7f);
+            // Male hair tufts = blonde (Yellow model); female = pink cat ears.
+            var hair = male
+                ? new Color(0.95f, 0.82f, 0.35f)
+                : new Color(0.95f, 0.7f, 0.75f);
+            var accent = male
+                ? new Color(0.95f, 0.78f, 0.25f) // yellow tie / vest accent
+                : new Color(0.95f, 0.55f, 0.65f);
+
+            var body = CreatePrimitive(PrimitiveType.Capsule, "BodyMesh", parent,
+                new Vector3(0f, bodyY, 0f),
+                new Vector3(bodyScaleX, bodyScaleY, bodyScaleX),
+                skin);
+            var root = new GameObject("BodyRoot");
+            root.transform.SetParent(parent, false);
+            body.transform.SetParent(root.transform, true);
+
+            if (male)
+            {
+                // Blonde hair blob (no cat ears — Yellow model is human).
+                CreatePrimitive(PrimitiveType.Sphere, "Hair", root.transform,
+                    new Vector3(0f, hairY, 0f), new Vector3(0.45f, 0.28f, 0.4f), hair);
+            }
+            else
+            {
+                var earL = CreatePrimitive(PrimitiveType.Cube, "EarL", root.transform,
+                    new Vector3(-hairX, hairY, 0f), new Vector3(0.18f, 0.28f, 0.1f), hair);
+                var earR = CreatePrimitive(PrimitiveType.Cube, "EarR", root.transform,
+                    new Vector3(hairX, hairY, 0f), new Vector3(0.18f, 0.28f, 0.1f), hair);
+                earL.transform.rotation = Quaternion.Euler(0f, 0f, 15f);
+                earR.transform.rotation = Quaternion.Euler(0f, 0f, -15f);
+            }
+
+            CreatePrimitive(PrimitiveType.Sphere, "Accent", root.transform,
+                new Vector3(0f, bodyY + 0.15f, 0.28f),
+                Vector3.one * (male ? 0.07f : 0.06f),
+                accent);
+
+            // Fake cloth slots so OutfitController can find CLOTH materials on the stand-in.
+            // Male tops ≈ yellow sweater vest.
+            var tops = CreatePrimitive(PrimitiveType.Cube, "Tops_CLOTH", root.transform,
+                new Vector3(0f, bodyY + 0.05f, 0.05f),
+                new Vector3(male ? 0.52f : 0.48f, male ? 0.42f : 0.4f, 0.25f),
+                male ? new Color(0.95f, 0.75f, 0.25f) : new Color(0.95f, 0.55f, 0.7f));
+            RenameMaterial(tops, "N00_002_01_Tops_01_CLOTH");
+            var shoes = CreatePrimitive(PrimitiveType.Cube, "Shoes_CLOTH", root.transform,
+                new Vector3(0f, 0.08f, 0.05f),
+                new Vector3(0.35f, 0.12f, 0.28f),
+                male ? new Color(0.12f, 0.12f, 0.14f) : new Color(0.35f, 0.2f, 0.25f));
+            RenameMaterial(shoes, "N00_003_01_Shoes_01_CLOTH");
+
+            return root;
+        }
+
+        static void RenameMaterial(GameObject go, string materialName)
+        {
+            var r = go.GetComponent<Renderer>();
+            if (r == null || r.sharedMaterial == null)
+                return;
+            // Instance so we don't rename a shared material asset.
+            var mat = r.material;
+            mat.name = materialName;
+            r.material = mat;
+        }
+
+        static void CreateSingingVisualizer(Transform companion, float characterHeight)
         {
             var go = new GameObject("SingingVisualizer");
             go.transform.SetParent(companion, false);
-            go.transform.localPosition = new Vector3(0f, 1.7f, 0f); // ~CatEarsGirl's 1.456m height + headroom
+            go.transform.localPosition = new Vector3(0f, characterHeight + 0.25f, 0f);
 
             var line = go.AddComponent<LineRenderer>();
             var mat = new Material(Shader.Find("Universal Render Pipeline/Unlit") ?? Shader.Find("Sprites/Default"));

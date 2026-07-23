@@ -2,7 +2,10 @@
     "name": "VRCompanion",
     "rootNamespace": "VRCompanion",
     "references": [
-        "Unity.InputSystem"
+        "Unity.InputSystem",
+        "VRM",
+        "UniGLTF",
+        "UniGLTF.Utils"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

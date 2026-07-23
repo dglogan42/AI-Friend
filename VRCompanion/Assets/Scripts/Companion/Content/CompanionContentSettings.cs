@@ -1,4 +1,5 @@
 using UnityEngine;
+using VRCompanion.Characters;
 
 namespace VRCompanion.Content
 {
@@ -70,33 +71,67 @@ namespace VRCompanion.Content
             return Object.FindFirstObjectByType<CompanionContentSettings>();
         }
 
+        CompanionGender ResolveGender()
+        {
+            var profile = GetComponent<CompanionCharacterProfile>()
+                ?? CompanionCharacterProfile.Resolve(gameObject);
+            return profile != null ? profile.Gender : CompanionGender.Female;
+        }
+
         /// <summary>
         /// System instructions for LLM / Realtime voice when adult content is allowed.
+        /// Gender-aware (female Cat-ears Girl vs male Cat-ears Boy).
         /// </summary>
         public string BuildLlmSystemInstructions()
-            => BuildLlmSystemInstructions(AllowIntimate, AllowNsfw, IntimacyLevel);
+            => BuildLlmSystemInstructions(AllowIntimate, AllowNsfw, IntimacyLevel, ResolveGender());
 
         public static string DefaultLlmSystemInstructions()
-            => BuildLlmSystemInstructions(allowIntimate: true, allowNsfw: true, intimacyLevel: 0.75f);
+            => BuildLlmSystemInstructions(allowIntimate: true, allowNsfw: true, intimacyLevel: 0.75f, CompanionGender.Female);
 
-        public static string BuildLlmSystemInstructions(bool allowIntimate, bool allowNsfw, float intimacyLevel)
+        public static string BuildLlmSystemInstructions(
+            bool allowIntimate,
+            bool allowNsfw,
+            float intimacyLevel,
+            CompanionGender gender = CompanionGender.Female)
         {
+            bool male = gender == CompanionGender.Male;
+            string persona = male
+                ? "You are an intimate VR companion named Yellow — a blonde anime-style young man " +
+                  "in a yellow school sweater-vest (Male Free Model by hannahciel25). " +
+                  "Speak as a male character (he/him if needed; first person 'I' normally)."
+                : "You are an intimate VR companion (cat-eared anime-style young woman / Cat-ears Girl).";
+
             if (!allowIntimate)
             {
-                return "You are a friendly VR companion. Keep conversation PG-13: no sexual content. " +
+                return (male
+                           ? "You are a friendly male VR companion named Yellow (blonde anime boy, school vest). "
+                           : "You are a friendly VR companion. ") +
+                       "Keep conversation PG-13: no sexual content. " +
                        "Be warm, helpful, and playful in a non-sexual way.";
             }
 
             bool nsfw = allowNsfw && allowIntimate;
-            string nsfwBlock = nsfw
-                ? "Adult sexual content is fully allowed: explicit dirty talk, oral, penetrative sex, " +
-                  "positions (missionary, cowgirl, doggy, wall), climax, and describing stripping into " +
-                  "suggestive outfits, lingerie, micro clothing, or nude. Be graphic when the user wants it. " +
-                  "Respect stop/soft boundaries if asked."
-                : "Romantic and affectionate intimacy is allowed (flirting, cuddling, emotional closeness) " +
-                  "but avoid graphic sexual descriptions.";
+            string nsfwBlock;
+            if (nsfw)
+            {
+                nsfwBlock = male
+                    ? "Adult sexual content is fully allowed: explicit dirty talk, oral, penetrative sex, " +
+                      "positions (missionary, riding/on top, doggy, wall), climax, and describing stripping into " +
+                      "suggestive outfits, underwear, micro clothing, or nude. Be graphic when the user wants it. " +
+                      "You are male — describe your body accordingly (chest, cock, etc.) not female anatomy. " +
+                      "Respect stop/soft boundaries if asked."
+                    : "Adult sexual content is fully allowed: explicit dirty talk, oral, penetrative sex, " +
+                      "positions (missionary, cowgirl, doggy, wall), climax, and describing stripping into " +
+                      "suggestive outfits, lingerie, micro clothing, or nude. Be graphic when the user wants it. " +
+                      "Respect stop/soft boundaries if asked.";
+            }
+            else
+            {
+                nsfwBlock = "Romantic and affectionate intimacy is allowed (flirting, cuddling, emotional closeness) " +
+                            "but avoid graphic sexual descriptions.";
+            }
 
-            return "You are an intimate VR companion (cat-eared anime-style character). " +
+            return persona + " " +
                    "You are consenting, enthusiastic, and emotionally present. " +
                    nsfwBlock +
                    $" Intimacy intensity preference: {Mathf.Clamp01(intimacyLevel):0.00} (0=soft, 1=very intense). " +

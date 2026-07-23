@@ -2,6 +2,7 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using UnityEngine;
+using VRCompanion.Characters;
 using VRCompanion.Content;
 using VRCompanion.Intimacy;
 using VRCompanion.Outfits;
@@ -11,11 +12,13 @@ namespace VRCompanion.Dialogue
     /// <summary>
     /// Rule-based replies with topic variants. Intimate/NSFW lines are gated by
     /// <see cref="CompanionContentSettings"/> (allowed by default for private adult use).
+    /// Lines adjust slightly for female vs male companion gender.
     /// </summary>
     public sealed class DialogueService : MonoBehaviour
     {
         [SerializeField] float thinkSeconds = 0.4f;
         [SerializeField] CompanionContentSettings contentSettings;
+        [SerializeField] CompanionCharacterProfile characterProfile;
 
         static readonly DialogueLine[] CafeLines =
         {
@@ -133,13 +136,22 @@ namespace VRCompanion.Dialogue
             new DialogueLine("Mmm, your warmth feels good.", ExpressionId.Blush),
         };
 
-        static readonly DialogueLine[] NsfwLines =
+        static readonly DialogueLine[] NsfwLinesFemale =
         {
             new DialogueLine("Yes… I want you. Tell me how you like it — doggy, cowgirl, oral, against the wall…", ExpressionId.Seductive),
             new DialogueLine("I'm already aching for you. Don't be gentle unless you want to be.", ExpressionId.Intimate),
             new DialogueLine("Undress me. Watch me change into something filthy for you.", ExpressionId.Seductive),
             new DialogueLine("God, yes. Touch me. Talk dirty — I can take it. Fuck me if you want.", ExpressionId.Intimate),
             new DialogueLine("I'll moan for you… strip me, use me, don't stop.", ExpressionId.Intimate),
+        };
+
+        static readonly DialogueLine[] NsfwLinesMale =
+        {
+            new DialogueLine("Yes… I want you. Tell me how — doggy, ride me, oral, against the wall…", ExpressionId.Seductive),
+            new DialogueLine("I'm already hard for you. Don't be gentle unless you want to be.", ExpressionId.Intimate),
+            new DialogueLine("Undress me. Watch me strip down for you.", ExpressionId.Seductive),
+            new DialogueLine("God, yes. Touch me. Talk dirty — I can take it. Fuck me if you want.", ExpressionId.Intimate),
+            new DialogueLine("I'll groan for you… strip me, use me, don't stop.", ExpressionId.Intimate),
         };
 
         static readonly DialogueLine[] OutfitLines =
@@ -149,9 +161,22 @@ namespace VRCompanion.Dialogue
             new DialogueLine("Clothes are optional for you. Enjoy the view.", ExpressionId.Intimate),
         };
 
+        static readonly DialogueLine[] NameLinesMale =
+        {
+            new DialogueLine("I'm Yellow — your male VR companion. You can call me that, or give me a nickname!", ExpressionId.Curious),
+            new DialogueLine("Yellow, at your service. Got another name in mind for me?", ExpressionId.Playful),
+        };
+
+        static readonly DialogueLine[] StoryLinesMale =
+        {
+            new DialogueLine("Once, a yellow-haired guy in a school vest waited in a quiet arcade… until someone said hello.", ExpressionId.Speaking),
+            new DialogueLine("Here's a short one: a shopkeeper once traded a whole shelf of trinkets for a single good joke.", ExpressionId.Speaking),
+            new DialogueLine("I remember a story about a café that only served coffee to people who smiled first.", ExpressionId.Speaking),
+        };
+
         static readonly DialogueLine[] NsfwSoftDeny =
         {
-            new DialogueLine("I can get flirty and close, but graphic stuff is off right now. Want romance instead?", ExpressionId.Blush),
+            new DialogueLine("I can get flirty and close, but NSFW is off right now. Want romance instead?", ExpressionId.Blush),
             new DialogueLine("Intimacy yes — explicit NSFW is disabled in settings. Turn on Allow NSFW if you want more.", ExpressionId.Embarrassed),
         };
 
@@ -187,10 +212,24 @@ namespace VRCompanion.Dialogue
             if (contentSettings == null)
                 contentSettings = GetComponent<CompanionContentSettings>()
                     ?? CompanionContentSettings.Resolve(gameObject);
+            if (characterProfile == null)
+                characterProfile = GetComponent<CompanionCharacterProfile>()
+                    ?? CompanionCharacterProfile.Resolve(gameObject);
         }
 
         CompanionContentSettings Content =>
             contentSettings != null ? contentSettings : CompanionContentSettings.Resolve(gameObject);
+
+        bool IsMale
+        {
+            get
+            {
+                var p = characterProfile != null
+                    ? characterProfile
+                    : CompanionCharacterProfile.Resolve(gameObject);
+                return p != null && p.IsMale;
+            }
+        }
 
         public async Task<DialogueReply> ReplyAsync(string userText, string sceneId, CancellationToken ct = default)
         {
@@ -223,7 +262,7 @@ namespace VRCompanion.Dialogue
                 return Build(HowAreYouLines, userText, null);
 
             if (text.Contains("your name") || text.Contains("who are you"))
-                return Build(NameLines, userText, null);
+                return Build(IsMale ? NameLinesMale : NameLines, userText, null);
 
             if (text.Contains("sing") || text.Contains("song") || text.Contains("music"))
                 return Build(SingLines, userText, null);
@@ -240,7 +279,7 @@ namespace VRCompanion.Dialogue
                     return Build(NsfwSoftDeny, userText, null);
 
                 var line = Build(OutfitLines, userText, null, outfitId, null);
-                string dressed = $"I'll wear {OutfitController.DisplayName(outfitId)}. " + line.Text;
+                string dressed = $"I'll wear {OutfitController.DisplayName(outfitId, IsMale)}. " + line.Text;
                 return new DialogueReply(dressed, line.Expression, null, outfitId, null);
             }
 
@@ -256,15 +295,26 @@ namespace VRCompanion.Dialogue
                 var scene = act == ExplicitAct.KissDeep || act == ExplicitAct.Tease
                     ? (CompanionSceneId?)null
                     : CompanionSceneId.Private;
+                bool male = IsMale;
                 string lead = act switch
                 {
-                    ExplicitAct.Oral => "Get comfortable… I'm going down on you.",
-                    ExplicitAct.Doggy => "Hands and knees. Take me from behind.",
-                    ExplicitAct.Cowgirl => "Lie back — I'm climbing on.",
-                    ExplicitAct.Missionary => "On my back for you. Open and ready.",
+                    ExplicitAct.Oral => male
+                        ? "Get comfortable… my mouth is yours."
+                        : "Get comfortable… I'm going down on you.",
+                    ExplicitAct.Doggy => male
+                        ? "Hands and knees. Take me from behind."
+                        : "Hands and knees. Take me from behind.",
+                    ExplicitAct.Cowgirl => male
+                        ? "Lie back — I'm climbing on top of you."
+                        : "Lie back — I'm climbing on.",
+                    ExplicitAct.Missionary => male
+                        ? "On my back for you. Ready."
+                        : "On my back for you. Open and ready.",
                     ExplicitAct.AgainstWall => "Push me into the wall.",
                     ExplicitAct.Climax => "I'm right there—make me finish.",
-                    ExplicitAct.Handjob => "My hand around you… watch.",
+                    ExplicitAct.Handjob => male
+                        ? "My hand around you… firm and slow."
+                        : "My hand around you… watch.",
                     ExplicitAct.Caress => "Touch me. Everywhere.",
                     ExplicitAct.KissDeep => "Kiss me like you mean it.",
                     ExplicitAct.Tease => "I'll tease you until you break.",
@@ -279,7 +329,7 @@ namespace VRCompanion.Dialogue
                     return Build(IntimateDisabledLines, userText, null);
                 if (!nsfwOk)
                     return Build(NsfwSoftDeny, userText, null);
-                return Build(NsfwLines, userText, CompanionSceneId.Private, OutfitId.Lingerie, ExplicitAct.Tease);
+                return Build(IsMale ? NsfwLinesMale : NsfwLinesFemale, userText, CompanionSceneId.Private, OutfitId.Lingerie, ExplicitAct.Tease);
             }
 
             if (IsKissIntent(text))
@@ -313,7 +363,7 @@ namespace VRCompanion.Dialogue
                 return Build(BoredLines, userText, null);
 
             if (text.Contains("story") || text.Contains("tell me"))
-                return Build(StoryLines, userText, null);
+                return Build(IsMale ? StoryLinesMale : StoryLines, userText, null);
 
             if (text.Contains("hello") || text.Contains("hi ") || text == "hi" || text.Contains("hey"))
             {

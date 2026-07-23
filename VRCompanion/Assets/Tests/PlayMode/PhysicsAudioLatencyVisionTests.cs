@@ -5,7 +5,6 @@ using UnityEngine;
 using VRCompanion.Audio;
 using VRCompanion.Body;
 using VRCompanion.Diagnostics;
-using VRCompanion.PhysicsTuning;
 using VRCompanion.Speech;
 using VRCompanion.Vision;
 
@@ -17,17 +16,17 @@ namespace VRCompanion.Tests
         public void Physics_BounceHeight_MatchesKinematics()
         {
             // v=4.905 m/s under g=9.81 → apex ~1.225 m
-            float h = PhysicsTuning.BounceHeightMeters(4.905f, -9.81f);
+            float h = CompanionPhysics.BounceHeightMeters(4.905f, -9.81f);
             Assert.AreEqual(1.225f, h, 0.02f);
-            float t = PhysicsTuning.TimeToApexSeconds(4.905f, -9.81f);
+            float t = CompanionPhysics.TimeToApexSeconds(4.905f, -9.81f);
             Assert.AreEqual(0.5f, t, 0.02f);
         }
 
         [Test]
         public void Physics_ApplyProjectDefaults_SetsGravity()
         {
-            PhysicsTuning.ApplyProjectDefaults();
-            Assert.AreEqual(PhysicsTuning.DefaultGravityY, Physics.gravity.y, 0.001f);
+            CompanionPhysics.ApplyProjectDefaults();
+            Assert.AreEqual(CompanionPhysics.DefaultGravityY, Physics.gravity.y, 0.001f);
         }
 
         [Test]

@@ -57,7 +57,8 @@ Stop: `kill $(cat /tmp/vrcompanion-trackers/robotics.pid)`.
 
 ### Physics / sound / voice / latency (Unity)
 
-- **Physics:** `PhysicsTuning` applies gravity/solver defaults; bootstrap floor + props colliders; `PhysicsBall` dynamic smoke prop.
+- **Physics:** `CompanionPhysics` applies gravity/solver defaults; bootstrap floor + props colliders; `PhysicsBall` dynamic smoke prop.
+- **Male companion:** press **G** (or `VRCOMPANION_GENDER=male`) for Cat-ears Boy; design refs in `docs/character-references/CatEarsBoy/`; drop a VRM at `Resources/Characters/CatEarsBoy/CatEarsBoy`.
 - **Sound/voice:** `StubTtsService` plays procedural tones (`ToneSynthesizer`); `AudioMeter` for RMS/peak/dBFS (singing + tests).
 - **Latency:** `LatencyMeter` on face/body/vision packet intervals + Python `proc_ms`; on-screen HUD (**F3**).
 - **Image recognition:** OpenCV labels (`person_present`, `motion`, `hand_raised_hint`, …) + body gestures (`hands_up`, `t_pose`, lean).

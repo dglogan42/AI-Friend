@@ -148,6 +148,7 @@ namespace VRCompanion.Outfits
                         break;
 
                     case OutfitId.Lingerie:
+                        // Female: dark rose lingerie tint; male: dark teal underwear tint.
                         WriteColor(slot.RuntimeMat, new Color(0.15f, 0.05f, 0.08f));
                         if (slot.IsTops)
                             WriteColor(slot.RuntimeMat, new Color(0.75f, 0.25f, 0.4f));
@@ -173,12 +174,16 @@ namespace VRCompanion.Outfits
             Debug.Log($"[OutfitController] Outfit → {current}");
         }
 
-        public static string DisplayName(OutfitId id) => id switch
+        public static string DisplayName(OutfitId id) => DisplayName(id, male: false);
+
+        public static string DisplayName(OutfitId id, bool male) => id switch
         {
             OutfitId.Default => "default clothes",
             OutfitId.Casual => "casual look",
-            OutfitId.Suggestive => "something tighter and more revealing",
-            OutfitId.Lingerie => "lingerie",
+            OutfitId.Suggestive => male
+                ? "something tighter and more open"
+                : "something tighter and more revealing",
+            OutfitId.Lingerie => male ? "snug underwear" : "lingerie",
             OutfitId.Micro => "barely anything",
             OutfitId.Nude => "nothing at all",
             _ => id.ToString()

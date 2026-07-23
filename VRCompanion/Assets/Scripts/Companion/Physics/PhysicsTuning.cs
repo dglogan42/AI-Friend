@@ -1,12 +1,14 @@
 using UnityEngine;
 
-namespace VRCompanion.PhysicsTuning
+namespace VRCompanion
 {
     /// <summary>
     /// Central place for companion-world physics defaults and prop helpers.
     /// Values chosen for stable VR tabletop props (not heavy simulation).
+    /// Named CompanionPhysics (not PhysicsTuning in a Physics* namespace) so it never
+    /// shadows <see cref="UnityEngine.Physics"/>.
     /// </summary>
-    public static class PhysicsTuning
+    public static class CompanionPhysics
     {
         public const float DefaultGravityY = -9.81f;
         public const float SoftBounce = 0.25f;

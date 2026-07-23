@@ -53,13 +53,20 @@ newer Ubuntu releases no longer ship by default.)
 
 ## Licensing — read before redistributing
 
-This repo mixes three different license scopes:
+This repo mixes several license scopes (full text in root [`LICENSE`](../LICENSE)):
 
-1. **Code we wrote** (any custom scripts) — MIT, see [`LICENSE`](./LICENSE).
-2. **The character model** (`Assets/Characters/CatEarsGirl/`) — owned by its creator
-   莲子酱, used under the usage conditions set on its VRoid Hub page: Avatar Use,
-   Redistribution, and Alterations all Allow, no attribution required. This is
-   **not MIT** and not ours to relicense — those are the creator's terms, tied to
-   that specific model page, and could change if the creator updates them.
-3. **VRChat SDK packages** (`Packages/com.vrchat.*`) — governed by VRChat's own SDK
+1. **Code we wrote** (any custom scripts) — MIT, see root [`LICENSE`](../LICENSE).
+2. **Female model** (`Assets/Characters/CatEarsGirl/`) — creator **莲子酱**, under
+   VRoid Hub terms: Avatar Use, Redistribution, and Alterations all Allow, no
+   attribution required. **Not MIT** and not ours to relicense.
+3. **Male model — Yellow** (`Assets/Characters/CatEarsBoy/` drop-in; mesh not in git) —
+   creator **[hannahciel25](https://hub.vroid.com/en/users/85849208)**;
+   [Male Free Model / Yellow](https://hub.vroid.com/en/characters/6436254208389465461/models/5132147205133357638).
+   **Attribution required.** Redistribution and alterations **disallowed**.
+   Creator asks VRChat uploads to be **private only**. Credit line:
+
+   > Male companion model "Yellow" (Male Free Model) by hannahciel25 —
+   > https://hub.vroid.com/en/characters/6436254208389465461/models/5132147205133357638
+
+4. **VRChat SDK packages** (`Packages/com.vrchat.*`) — governed by VRChat's own SDK
    license/EULA, not this repo's license.

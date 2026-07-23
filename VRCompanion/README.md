@@ -1,8 +1,9 @@
 # VR Companion
 
-A standalone OpenXR VR companion app (Unity 6000.0.79f1) — a cat-eared character with
-expressions, dialogue, and voice, set in a small hub/café/shop/**private** world. Targets
-desktop VR and Android/Quest via OpenXR.
+A standalone OpenXR VR companion app (Unity 6000.0.79f1) — cat-eared characters
+(**girl** and **boy**) with expressions, gender-aware dialogue, and voice, set in a
+small hub/café/shop/**private** world. Targets desktop VR and Android/Quest via OpenXR.
+Press **G** to switch gender live.
 
 **Intimacy & NSFW are allowed by default** (`CompanionContentSettings` on the companion).
 Disable *Allow Intimate* / *Allow NSFW* in the Inspector for SFW demos.
@@ -61,23 +62,32 @@ character's rig — it's wired up and streaming, at the same maturity `WebcamFac
 was before `FaceTrackingBridge`/`ExpressionController` existed to act on it. Driving actual
 bone rotations/IK from `BodyPoseFrame` would be a separate follow-up.
 
-## Character model
+## Character models (female + male)
 
-`CompanionBootstrap` loads the character at runtime via
-`Resources.Load<GameObject>("Characters/CatEarsGirl/CatEarsGirl")`
-(`Assets/Resources/Characters/CatEarsGirl/`) — the same already-imported VRM prefab used
-by [`VRCompanionAvatar`](../VRCompanionAvatar), copied over rather than re-imported so its
-baked meshes/materials/Humanoid Avatar carry across unchanged. It depends only on
-`com.vrmc.gltf`/`com.vrmc.univrm` (bundled as embedded packages under `Packages/`) for the
-MToon shader and VRM runtime components (`VRMLookAtHead`, `VRMSpringBone`, etc.) — no
-VRChat SDK packages are involved. `ExpressionController` finds the character's face
-`SkinnedMeshRenderer` by looking for the VRoid-standard `Fcl_ALL_Neutral` blend shape and
-drives the six `Fcl_ALL_*` preset shapes directly (see `FaceExpressionShapes.ShapeFor`); if
-the prefab can't be loaded (e.g. stripped from a minimal build), `CompanionBootstrap` falls
-back to the original primitive capsule + ear cubes stand-in.
+`CompanionBootstrap` picks a gender from (in order) `VRCOMPANION_GENDER` env,
+`PlayerPrefs` (`VRCompanion.CharacterGender`), or the Inspector default, then loads:
 
-See `VRCompanionAvatar/README.md#licensing--read-before-redistributing` for the model's
-third-party license terms — it's a separate asset from this repo's own MIT code.
+| Gender | Model | Load path | Fallback |
+|--------|-------|-----------|----------|
+| Female | Cat-ears Girl (莲子酱) | `Resources/Characters/CatEarsGirl/CatEarsGirl` | Pink/peach capsule + ears |
+| Male | **Yellow** by **hannahciel25** | Prefab, else `StreamingAssets/Characters/CatEarsBoy.glb`, else stand-in | Yellow/gold capsule |
+
+**Male credit (required):** model "Yellow" (Male Free Model) by **hannahciel25** —  
+https://hub.vroid.com/en/characters/6436254208389465461/models/5132147205133357638  
+Terms: attribution required; **no redistribution**; **no alterations**. Binary is
+gitignored — see [`Assets/Resources/Characters/CatEarsBoy/README.md`](./Assets/Resources/Characters/CatEarsBoy/README.md)
+and root [`LICENSE`](../LICENSE).
+
+The girl prefab is the same already-imported VRM used by
+[`VRCompanionAvatar`](../VRCompanionAvatar). Until the male file is present, a
+procedural stand-in is used; dialogue/LLM/NSFW lines still switch for male.
+
+Identity / video-reference art:
+[`docs/character-references/CatEarsBoy/`](../docs/character-references/CatEarsBoy/).
+
+Depends only on `com.vrmc.gltf`/`com.vrmc.univrm` (embedded under `Packages/`) for MToon
+and VRM runtime — no VRChat SDK. `ExpressionController` drives VRoid `Fcl_ALL_*` blend
+shapes when present; otherwise tints the stand-in.
 
 ## Testing
 
@@ -93,4 +103,7 @@ except `SingingRaterLiveSmokeTest`, which genuinely opens the mic.
 
 ## License
 
-MIT — see [`LICENSE`](./LICENSE).
+Code: MIT — see root [`LICENSE`](../LICENSE).
+
+Male model **Yellow** by **hannahciel25** (attribution required; no redistribution):
+https://hub.vroid.com/en/characters/6436254208389465461/models/5132147205133357638

@@ -2,6 +2,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using VRCompanion.Characters;
 using VRCompanion.Dialogue;
 using VRCompanion.Scenes;
 using VRCompanion.Speech;
@@ -14,6 +15,7 @@ namespace VRCompanion
     /// <summary>
     /// Main loop: listen → understand → express → speak → optional scene / outfit / explicit act.
     /// Works with stub ASR/TTS in Editor; swap interfaces for local models later.
+    /// Hotkeys: Space talk, K sing, O outfit, G switch gender (reloads body next session / live swap).
     /// </summary>
     public sealed class CompanionController : MonoBehaviour
     {
@@ -23,6 +25,7 @@ namespace VRCompanion
         [SerializeField] SceneSwitcher scenes;
         [SerializeField] OutfitController outfits;
         [SerializeField] ExplicitInteractionController explicitActs;
+        [SerializeField] CompanionCharacterProfile characterProfile;
         [SerializeField] MonoBehaviour asrBehaviour;
         [SerializeField] MonoBehaviour ttsBehaviour;
         [SerializeField] MonoBehaviour realtimeBehaviour;
@@ -32,6 +35,7 @@ namespace VRCompanion
         [SerializeField] Key pushToTalkKey = Key.Space;
         [SerializeField] Key singKey = Key.K;
         [SerializeField] Key cycleOutfitKey = Key.O;
+        [SerializeField] Key switchGenderKey = Key.G;
         [SerializeField] bool autoGreetOnStart = true;
 
         IAsrService _asr;
@@ -39,6 +43,7 @@ namespace VRCompanion
         IRealtimeConversationService _realtime;
         CancellationTokenSource _loopCts;
         bool _busy;
+        Transform _bodyRoot;
 
         public bool IsBusy => _busy;
 
@@ -60,6 +65,13 @@ namespace VRCompanion
             if (explicitActs == null)
                 explicitActs = GetComponent<ExplicitInteractionController>()
                     ?? gameObject.AddComponent<ExplicitInteractionController>();
+            if (characterProfile == null)
+                characterProfile = GetComponent<CompanionCharacterProfile>()
+                    ?? gameObject.AddComponent<CompanionCharacterProfile>();
+
+            var body = transform.Find("Body");
+            if (body != null)
+                _bodyRoot = body;
         }
 
         async void Start()
@@ -68,8 +80,11 @@ namespace VRCompanion
             if (autoGreetOnStart)
             {
                 expression?.SetExpression(ExpressionId.Flirty);
+                string who = characterProfile != null && characterProfile.IsMale
+                    ? "Yellow, your male companion"
+                    : "your cat-eared girl companion";
                 await _tts.SpeakAsync(
-                    "Hi! I'm your companion. Press Space to talk — we can keep it sweet or get intimate.",
+                    $"Hi! I'm {who}. Press Space to talk, G to switch gender — we can keep it sweet or get intimate.",
                     _loopCts.Token);
                 expression?.SetExpression(ExpressionId.Neutral, 0.2f);
             }
@@ -87,6 +102,8 @@ namespace VRCompanion
                 _ = RunSingingChallengeAsync();
             if (keyboard[cycleOutfitKey].wasPressedThisFrame && !_busy && outfits != null)
                 CycleOutfitHotkey();
+            if (keyboard[switchGenderKey].wasPressedThisFrame && !_busy)
+                _ = SwitchGenderAsync();
         }
 
         void CycleOutfitHotkey()
@@ -98,6 +115,77 @@ namespace VRCompanion
                 outfits.TrySetOutfit(OutfitId.Default);
             expression?.SetExpression(ExpressionId.Flirty);
             Debug.Log($"[CompanionController] Outfit hotkey → {outfits.Current}");
+        }
+
+        /// <summary>
+        /// Live-swap female ↔ male body, persist preference, and rewire expression/outfits/explicit.
+        /// </summary>
+        public async Task SwitchGenderAsync()
+        {
+            if (_busy || characterProfile == null)
+                return;
+
+            _busy = true;
+            var ct = _loopCts?.Token ?? CancellationToken.None;
+            try
+            {
+                characterProfile.Gender = characterProfile.IsMale
+                    ? CompanionGender.Female
+                    : CompanionGender.Male;
+                characterProfile.SavePreference();
+
+                // Destroy old body (VRM or stand-in).
+                if (_bodyRoot == null)
+                {
+                    var found = transform.Find("Body");
+                    if (found != null)
+                        _bodyRoot = found;
+                }
+                if (_bodyRoot != null)
+                {
+                    Object.Destroy(_bodyRoot.gameObject);
+                    _bodyRoot = null;
+                }
+
+                var body = CompanionBootstrap.CreateCharacter(transform, characterProfile);
+                _bodyRoot = body.transform;
+
+                expression = body.GetComponent<ExpressionController>()
+                    ?? body.AddComponent<ExpressionController>();
+                outfits?.SetCharacterRoot(body.transform);
+                explicitActs?.Configure(body.transform, expression, outfits, _tts);
+
+                // Rebind face tracking to the new ExpressionController.
+                var faceBridge = GetComponent<FaceTrackingBridge>();
+                if (faceBridge != null)
+                {
+                    var webcam = GetComponent<WebcamFaceTrackingSource>();
+                    var vive = GetComponent<ViveFaceTrackingSource>();
+                    faceBridge.Configure(expression, webcam, vive);
+                }
+
+                // Keep singing visualizer roughly at head height.
+                var viz = transform.Find("SingingVisualizer");
+                if (viz != null)
+                    viz.localPosition = new Vector3(0f, characterProfile.ApproximateHeight + 0.25f, 0f);
+
+                expression.SetExpression(ExpressionId.Excited);
+                string line = characterProfile.IsMale
+                    ? "Switched — I'm Yellow, your male companion now."
+                    : "Switched — I'm your cat-eared girl now.";
+                if (_tts != null)
+                    await _tts.SpeakAsync(line, ct);
+                expression.SetExpression(ExpressionId.Flirty, 0.5f);
+                Debug.Log($"[CompanionController] Gender → {characterProfile.Gender} ({characterProfile.DisplayName})");
+            }
+            catch (TaskCanceledException)
+            {
+                // ignore
+            }
+            finally
+            {
+                _busy = false;
+            }
         }
 
         public async Task RunSingingChallengeAsync()

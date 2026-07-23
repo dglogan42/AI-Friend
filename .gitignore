@@ -14,3 +14,36 @@ What Is a Flowchart_ Flowchart Examples, Types, and Real Use_.png
 *api_key*
 *.env
 secrets/
+
+# ---------------------------------------------------------------------------
+# Male Free Model / Yellow by hannahciel25
+# https://hub.vroid.com/en/characters/6436254208389465461/models/5132147205133357638
+# Creator terms: attribution required; redistribution DISALLOWED; no alterations.
+# Keep the mesh local only — do not commit .vrm / .glb binaries for this model.
+# Install: VRCompanion/Assets/StreamingAssets/Characters/CatEarsBoy.glb
+# Docs:    VRCompanion/Assets/Resources/Characters/CatEarsBoy/README.md
+# Credit:  LICENSE + README.md
+# ---------------------------------------------------------------------------
+**/Characters/CatEarsBoy/*.vrm
+**/Characters/CatEarsBoy/**/*.vrm
+**/Characters/CatEarsBoy/*.glb
+**/Characters/CatEarsBoy/**/*.glb
+**/StreamingAssets/Characters/**
+!**/StreamingAssets/Characters/**/
+!**/StreamingAssets/Characters/**/*.md
+!**/StreamingAssets/Characters/**/*.md.meta
+
+# Explicit names (repo root, Downloads paste, etc.)
+Yellow.vrm
+Yellow.glb
+CatEarsBoy.vrm
+CatEarsBoy.glb
+2531419525577818593.glb
+**/Yellow.vrm
+**/Yellow.glb
+**/CatEarsBoy.vrm
+**/CatEarsBoy.glb
+**/2531419525577818593.glb
+
+# Home-cache path used by VrmRuntimeLoader (never under git, but listed for clarity)
+# ~/.vrcompanion/models/

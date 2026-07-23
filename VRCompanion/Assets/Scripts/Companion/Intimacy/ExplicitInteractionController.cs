@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using UnityEngine;
+using VRCompanion.Characters;
 using VRCompanion.Content;
 using VRCompanion.Outfits;
 using VRCompanion.Speech;
@@ -12,6 +13,7 @@ namespace VRCompanion.Intimacy
     /// <summary>
     /// Runs multi-step explicit interactions: dialogue lines, expressions, outfit
     /// changes, and simple body pose offsets (no full animation rig required).
+    /// Steps are gender-aware (female Cat-ears Girl vs male Cat-ears Boy).
     /// </summary>
     public sealed class ExplicitInteractionController : MonoBehaviour
     {
@@ -20,6 +22,7 @@ namespace VRCompanion.Intimacy
         [SerializeField] OutfitController outfits;
         [SerializeField] MonoBehaviour ttsBehaviour;
         [SerializeField] float stepPauseSeconds = 0.35f;
+        [SerializeField] CompanionCharacterProfile characterProfile;
 
         ITtsService _tts;
         Vector3 _baseLocalPos;
@@ -40,8 +43,22 @@ namespace VRCompanion.Intimacy
                 expression = GetComponentInChildren<ExpressionController>();
             if (outfits == null)
                 outfits = GetComponent<OutfitController>();
+            if (characterProfile == null)
+                characterProfile = GetComponent<CompanionCharacterProfile>()
+                    ?? CompanionCharacterProfile.Resolve(gameObject);
             _tts = ttsBehaviour as ITtsService ?? GetComponent<ITtsService>();
             CaptureBase();
+        }
+
+        bool IsMale
+        {
+            get
+            {
+                var p = characterProfile != null
+                    ? characterProfile
+                    : CompanionCharacterProfile.Resolve(gameObject);
+                return p != null && p.IsMale;
+            }
         }
 
         void CaptureBase()
@@ -74,7 +91,8 @@ namespace VRCompanion.Intimacy
             { act = ExplicitAct.Climax; return true; }
             if (text.Contains("doggy") || text.Contains("from behind") || text.Contains("behind me"))
             { act = ExplicitAct.Doggy; return true; }
-            if (text.Contains("cowgirl") || text.Contains("ride me") || text.Contains("on top"))
+            if (text.Contains("cowgirl") || text.Contains("ride me") || text.Contains("on top")
+                || text.Contains("ride you") || text.Contains("straddle"))
             { act = ExplicitAct.Cowgirl; return true; }
             if (text.Contains("missionary") || text.Contains("on your back") || text.Contains("lie down"))
             { act = ExplicitAct.Missionary; return true; }
@@ -114,7 +132,7 @@ namespace VRCompanion.Intimacy
 
             try
             {
-                var steps = BuildSteps(act);
+                var steps = BuildSteps(act, IsMale);
                 foreach (var step in steps)
                 {
                     ct.ThrowIfCancellationRequested();
@@ -200,7 +218,7 @@ namespace VRCompanion.Intimacy
             poseRoot.localRotation = _baseLocalRot;
         }
 
-        static List<InteractionStep> BuildSteps(ExplicitAct act)
+        static List<InteractionStep> BuildSteps(ExplicitAct act, bool male)
         {
             switch (act)
             {
@@ -208,7 +226,10 @@ namespace VRCompanion.Intimacy
                     return new List<InteractionStep>
                     {
                         new("Watch me…", ExpressionId.Seductive, 1f, OutfitId.Suggestive, PoseHint.LeanIn),
-                        new("I want you aching before I even touch you.", ExpressionId.Flirty, 1f, OutfitId.Lingerie, PoseHint.Arch),
+                        new(male
+                                ? "I want you aching before I even touch you."
+                                : "I want you aching before I even touch you.",
+                            ExpressionId.Flirty, 1f, OutfitId.Lingerie, PoseHint.Arch),
                         new("Beg a little and I'll give you more.", ExpressionId.Seductive, 1f, null, PoseHint.LeanIn),
                     };
                 case ExplicitAct.KissDeep:
@@ -222,8 +243,14 @@ namespace VRCompanion.Intimacy
                     return new List<InteractionStep>
                     {
                         new("Your hands on me… yes, like that.", ExpressionId.Blush, 1f, OutfitId.Lingerie, PoseHint.Arch),
-                        new("Harder. Touch my chest—squeeze.", ExpressionId.Intimate, 1f, OutfitId.Micro, PoseHint.Arch),
-                        new("Fuck, I'm getting wet just from this.", ExpressionId.Seductive, 1f, null, PoseHint.LeanIn),
+                        new(male
+                                ? "Harder. Touch my chest—grip me."
+                                : "Harder. Touch my chest—squeeze.",
+                            ExpressionId.Intimate, 1f, OutfitId.Micro, PoseHint.Arch),
+                        new(male
+                                ? "Fuck, I'm getting hard just from this."
+                                : "Fuck, I'm getting wet just from this.",
+                            ExpressionId.Seductive, 1f, null, PoseHint.LeanIn),
                     };
                 case ExplicitAct.Oral:
                     return new List<InteractionStep>
@@ -237,21 +264,36 @@ namespace VRCompanion.Intimacy
                     {
                         new("Let me stroke you… slow first.", ExpressionId.Flirty, 1f, OutfitId.Suggestive, PoseHint.LeanIn),
                         new("Faster now—feel my grip tighten.", ExpressionId.Intimate, 1f, OutfitId.Lingerie, PoseHint.LeanIn),
-                        new("You're throbbing. Want my mouth next, or inside me?", ExpressionId.Seductive, 1f, null, PoseHint.Arch),
+                        new(male
+                                ? "You're throbbing. Want my mouth next, or want me inside you?"
+                                : "You're throbbing. Want my mouth next, or inside me?",
+                            ExpressionId.Seductive, 1f, null, PoseHint.Arch),
                     };
                 case ExplicitAct.Missionary:
                     return new List<InteractionStep>
                     {
-                        new("Lay me down. Legs open for you.", ExpressionId.Seductive, 1f, OutfitId.Nude, PoseHint.OnBack),
-                        new("Push in—ah!—fill me.", ExpressionId.Intimate, 1f, null, PoseHint.OnBack),
+                        new(male
+                                ? "Lay me down. Legs open for you."
+                                : "Lay me down. Legs open for you.",
+                            ExpressionId.Seductive, 1f, OutfitId.Nude, PoseHint.OnBack),
+                        new(male
+                                ? "Push in—nngh—fill me."
+                                : "Push in—ah!—fill me.",
+                            ExpressionId.Intimate, 1f, null, PoseHint.OnBack),
                         new("Harder, fuck me deeper, don't stop—", ExpressionId.Intimate, 1f, null, PoseHint.OnBack),
                     };
                 case ExplicitAct.Cowgirl:
                     return new List<InteractionStep>
                     {
-                        new("I'll ride you. Watch my body move.", ExpressionId.Seductive, 1f, OutfitId.Micro, PoseHint.Straddle),
+                        new(male
+                                ? "I'll ride you. Watch my body move."
+                                : "I'll ride you. Watch my body move.",
+                            ExpressionId.Seductive, 1f, OutfitId.Micro, PoseHint.Straddle),
                         new("Nngh—so deep when I sink down…", ExpressionId.Intimate, 1f, OutfitId.Nude, PoseHint.Straddle),
-                        new("Feel me squeeze you. I'm not getting off until you lose it.", ExpressionId.Seductive, 1f, null, PoseHint.Straddle),
+                        new(male
+                                ? "Feel me squeeze you. I'm not getting off until you lose it."
+                                : "Feel me squeeze you. I'm not getting off until you lose it.",
+                            ExpressionId.Seductive, 1f, null, PoseHint.Straddle),
                     };
                 case ExplicitAct.Doggy:
                     return new List<InteractionStep>
@@ -271,7 +313,10 @@ namespace VRCompanion.Intimacy
                     return new List<InteractionStep>
                     {
                         new("I'm close—don't you dare stop—", ExpressionId.Intimate, 1f, OutfitId.Nude, PoseHint.ClimaxShake),
-                        new("Ah—cumming—fuck, yes—!", ExpressionId.Intimate, 1f, null, PoseHint.ClimaxShake),
+                        new(male
+                                ? "Ah—cumming—fuck, yes—!"
+                                : "Ah—cumming—fuck, yes—!",
+                            ExpressionId.Intimate, 1f, null, PoseHint.ClimaxShake),
                         new("*panting* …Stay inside. Hold me.", ExpressionId.Affectionate, 0.9f, null, PoseHint.LeanIn),
                     };
                 default:
