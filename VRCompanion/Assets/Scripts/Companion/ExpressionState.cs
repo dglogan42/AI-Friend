@@ -12,7 +12,15 @@ namespace VRCompanion
         Thinking,
         Speaking,
         Surprised,
-        Sad
+        Sad,
+        Excited,
+        Playful,
+        Sleepy,
+        Confused,
+        Laughing,
+        Bored,
+        Determined,
+        Embarrassed
     }
 
     /// <summary>

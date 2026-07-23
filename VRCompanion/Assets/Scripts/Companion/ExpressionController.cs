@@ -62,7 +62,9 @@ namespace VRCompanion
             float browDown = Mathf.Max(frame.Get("browDownLeft"), frame.Get("browDownRight"));
             float browUp = Mathf.Max(frame.Get("browOuterUpLeft"), frame.Get("browOuterUpRight"));
 
-            if (jawOpen > 0.4f)
+            if (jawOpen > 0.4f && smile > 0.35f)
+                SetExpression(ExpressionId.Laughing, Mathf.Max(jawOpen, smile));
+            else if (jawOpen > 0.4f)
                 SetExpression(ExpressionId.Surprised, jawOpen);
             else if (smile > 0.35f)
                 SetExpression(ExpressionId.Happy, smile);
@@ -85,6 +87,14 @@ namespace VRCompanion
                 ExpressionId.Speaking => new Color(0.35f, 1f, 0.55f),
                 ExpressionId.Surprised => new Color(1f, 0.55f, 0.2f),
                 ExpressionId.Sad => new Color(0.45f, 0.55f, 0.85f),
+                ExpressionId.Excited => new Color(1f, 0.45f, 0.65f),
+                ExpressionId.Playful => new Color(1f, 0.6f, 0.85f),
+                ExpressionId.Sleepy => new Color(0.6f, 0.6f, 0.75f),
+                ExpressionId.Confused => new Color(0.9f, 0.75f, 0.3f),
+                ExpressionId.Laughing => new Color(1f, 0.75f, 0.1f),
+                ExpressionId.Bored => new Color(0.55f, 0.55f, 0.55f),
+                ExpressionId.Determined => new Color(0.9f, 0.3f, 0.25f),
+                ExpressionId.Embarrassed => new Color(1f, 0.6f, 0.7f),
                 _ => new Color(0.85f, 0.85f, 0.9f)
             };
         }
