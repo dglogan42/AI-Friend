@@ -69,6 +69,7 @@ namespace VRCompanion
 
             companionGo.AddComponent<SingingRaterService>();
             companionGo.AddComponent<KinectBodyTrackingSource>();
+            CreateSingingVisualizer(companionGo.transform);
 
             var switcherGo = new GameObject("SceneSwitcher");
             var switcher = switcherGo.AddComponent<SceneSwitcher>();
@@ -114,6 +115,22 @@ namespace VRCompanion
             light.type = LightType.Directional;
             light.intensity = 1.1f;
             lightGo.transform.rotation = Quaternion.Euler(50f, -30f, 0f);
+        }
+
+        static void CreateSingingVisualizer(Transform companion)
+        {
+            var go = new GameObject("SingingVisualizer");
+            go.transform.SetParent(companion, false);
+            go.transform.localPosition = new Vector3(0f, 2.1f, 0f);
+
+            var line = go.AddComponent<LineRenderer>();
+            var mat = new Material(Shader.Find("Universal Render Pipeline/Unlit") ?? Shader.Find("Sprites/Default"));
+            mat.color = new Color(0.6f, 0.9f, 1f);
+            line.sharedMaterial = mat;
+            line.startColor = line.endColor = new Color(0.6f, 0.9f, 1f);
+            line.startWidth = line.endWidth = 0.02f;
+
+            go.AddComponent<SingingVisualizer>();
         }
 
         static GameObject CreateLocation(string name, Transform parent, Color color, Vector3 position)

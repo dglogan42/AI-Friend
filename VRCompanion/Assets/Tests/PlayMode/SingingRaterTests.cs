@@ -118,5 +118,38 @@ namespace VRCompanion.Tests
             Assert.AreEqual(ExpressionId.Sad, SingingRaterService.ExpressionFor(low));
             Assert.AreEqual(ExpressionId.Curious, SingingRaterService.ExpressionFor(noSignal));
         }
+
+        [Test]
+        public void WaveformVisualizer_Downsample_ReturnsRequestedPointCount()
+        {
+            var samples = GenerateSineWave(440f, 0.1f, SampleRate);
+
+            var points = WaveformVisualizer.Downsample(samples, 64);
+
+            Assert.AreEqual(64, points.Length);
+        }
+
+        [Test]
+        public void WaveformVisualizer_Downsample_PreservesPeakAmplitude()
+        {
+            var samples = GenerateSineWave(440f, 0.1f, SampleRate, amplitude: 0.8f);
+
+            var points = WaveformVisualizer.Downsample(samples, 32);
+
+            float maxAbs = 0f;
+            foreach (var p in points)
+                maxAbs = System.Math.Max(maxAbs, System.Math.Abs(p));
+            Assert.Greater(maxAbs, 0.7f, "Peak-picking downsample should preserve near-full amplitude, not average it away.");
+        }
+
+        [Test]
+        public void WaveformVisualizer_Downsample_EmptyInput_ReturnsFlatZeroedArray()
+        {
+            var points = WaveformVisualizer.Downsample(System.Array.Empty<float>(), 16);
+
+            Assert.AreEqual(16, points.Length);
+            foreach (var p in points)
+                Assert.AreEqual(0f, p);
+        }
     }
 }

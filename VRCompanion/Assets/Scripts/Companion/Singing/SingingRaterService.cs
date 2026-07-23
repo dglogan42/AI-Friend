@@ -15,8 +15,16 @@ namespace VRCompanion.Singing
         [SerializeField] AudioSource audioSource;
         [SerializeField] int sampleRate = 24000;
         [SerializeField] string micDevice;
+        [SerializeField] float livePollInterval = 0.05f;
 
         MelodyNote[] _melody = ReferenceMelody.TwinkleOpening;
+
+        /// <summary>
+        /// Raised roughly every <see cref="livePollInterval"/> seconds while recording, with the
+        /// newest chunk of mic samples and the pitch detected in it (0 if unvoiced/silent), so a
+        /// visualizer can draw the live oscillation without waiting for the final score.
+        /// </summary>
+        public event Action<float[], float> LiveAudioFrame;
 
         void Awake()
         {
@@ -39,7 +47,7 @@ namespace VRCompanion.Singing
             if (clip == null)
                 return SingingResult.NoSignal;
 
-            await Task.Delay(TimeSpan.FromSeconds(totalDuration), ct);
+            await PollLiveAudioAsync(clip, device, totalDuration, ct);
 
             int recordedSamples = Mathf.Clamp(Microphone.GetPosition(device), 0, clip.samples);
             if (Microphone.IsRecording(device))
@@ -52,6 +60,36 @@ namespace VRCompanion.Singing
             clip.GetData(buffer, 0);
 
             return SingingScorer.Score(buffer, sampleRate, _melody);
+        }
+
+        /// <summary>
+        /// Polls the in-progress mic recording for new samples every <see cref="livePollInterval"/>
+        /// seconds, running pitch detection on each chunk and raising <see cref="LiveAudioFrame"/>,
+        /// until <paramref name="totalDuration"/> seconds have elapsed.
+        /// </summary>
+        async Task PollLiveAudioAsync(AudioClip clip, string device, float totalDuration, CancellationToken ct)
+        {
+            int lastReadPosition = 0;
+            float elapsed = 0f;
+
+            while (elapsed < totalDuration)
+            {
+                float step = Mathf.Min(livePollInterval, totalDuration - elapsed);
+                await Task.Delay(TimeSpan.FromSeconds(step), ct);
+                elapsed += step;
+
+                int position = Microphone.GetPosition(device);
+                int newSampleCount = position - lastReadPosition;
+                if (newSampleCount <= 0)
+                    continue;
+
+                var chunk = new float[newSampleCount];
+                clip.GetData(chunk, lastReadPosition);
+                lastReadPosition = position;
+
+                PitchDetector.TryDetectPitch(chunk, sampleRate, out float detectedHz, out _);
+                LiveAudioFrame?.Invoke(chunk, detectedHz);
+            }
         }
 
         async Task PlayReferenceMelodyAsync(CancellationToken ct)
