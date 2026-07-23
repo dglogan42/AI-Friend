@@ -31,6 +31,11 @@ namespace VRCompanion
             ExpressionId.Laughing => Fun,
             ExpressionId.Confused => Angry,
             ExpressionId.Determined => Angry,
+            ExpressionId.Affectionate => Joy,
+            ExpressionId.Flirty => Fun,
+            ExpressionId.Blush => Sorrow, // soft downturn / shy preset on VRoid
+            ExpressionId.Seductive => Fun,
+            ExpressionId.Intimate => Joy,
             // Neutral, Listening, Thinking, Speaking, Bored have no distinct preset.
             _ => Neutral,
         };

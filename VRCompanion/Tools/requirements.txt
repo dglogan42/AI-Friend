@@ -1,0 +1,6 @@
+# Shared env for Tools/FaceTracking and Tools/BodyTracking trackers.
+# Install into Tools/FaceTracking/.venv (already present):
+#   Tools/FaceTracking/.venv/bin/pip install -r Tools/requirements.txt
+opencv-python>=4.8
+mediapipe>=0.10.14
+numpy>=1.24

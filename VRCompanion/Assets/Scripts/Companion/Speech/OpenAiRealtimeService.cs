@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using UnityEngine;
+using VRCompanion.Content;
 
 namespace VRCompanion.Speech
 {
@@ -67,10 +68,23 @@ namespace VRCompanion.Speech
 
         string BuildSessionUpdateJson()
         {
+            var content = CompanionContentSettings.Resolve(gameObject);
+            string instructions = content != null
+                ? content.BuildLlmSystemInstructions()
+                : CompanionContentSettings.DefaultLlmSystemInstructions();
+            // Escape for JSON string embedding.
+            instructions = instructions
+                .Replace("\\", "\\\\")
+                .Replace("\"", "\\\"")
+                .Replace("\n", "\\n")
+                .Replace("\r", "");
+
             // Hand-built (not JsonUtility) since the payload is nested/optional-heavy.
+            // instructions allow intimate/NSFW when CompanionContentSettings permits it.
             return "{\"type\":\"session.update\",\"session\":{" +
                    "\"modalities\":[\"text\",\"audio\"]," +
                    $"\"voice\":\"{voice}\"," +
+                   $"\"instructions\":\"{instructions}\"," +
                    "\"input_audio_format\":\"pcm16\"," +
                    "\"output_audio_format\":\"pcm16\"," +
                    "\"input_audio_transcription\":{\"model\":\"whisper-1\"}," +

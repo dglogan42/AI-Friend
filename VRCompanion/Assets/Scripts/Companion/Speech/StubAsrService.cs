@@ -16,7 +16,11 @@ namespace VRCompanion.Speech
         {
             "Hello, how are you?",
             "Can we go to the cafe?",
+            "Wear something sexy",
+            "Put on lingerie",
+            "Fuck me doggy",
             "Show me the shop.",
+            "Get naked",
             "Tell me a short story."
         };
 

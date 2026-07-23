@@ -22,7 +22,45 @@
 1. Focus Unity (project should already be open on `VRCompanion`).
 2. Menu: **VR Companion → Create Bootstrap Scene** (or **Open Bootstrap Scene**).
 3. Press **Play**, then **Space** to run a listen → reply → express turn.
-4. Say (via stub phrases) things like “café” or “shop” to switch locations.
+4. Intimate / explicit examples (NSFW **on** by default):
+   - Outfits: “wear lingerie”, “something sexy”, “get naked”, “get dressed” — or press **O**
+   - Acts: “tease me”, “blowjob”, “doggy”, “cowgirl”, “fuck me”, “against the wall”, “make me cum”
+5. Toggle **Allow Intimate** / **Allow NSFW** on the Companion for SFW demos.
+
+## Webcam robotics trackers (face + body + vision → Unity UDP)
+
+Python MediaPipe + OpenCV under `Tools/` stream:
+
+| Port | Payload | Unity consumer |
+|------|---------|----------------|
+| **5555** | Face blendshapes + `proc_ms` | `WebcamFaceTrackingSource` |
+| **5556** | Body joints + `proc_ms` | `WebcamBodyTrackingSource` (+ gesture scores) |
+| **5557** | Image labels + `proc_ms` | `WebcamImageRecognitionSource` |
+
+**Use the combined process** (`run_robotics_tracker.py`) — one webcam can't be opened
+by two OpenCV processes at once.
+
+```sh
+# unit tests (no camera)
+Tools/FaceTracking/.venv/bin/python Tools/tests/test_tracking_io.py -v
+Tools/FaceTracking/.venv/bin/python Tools/tests/test_vision_latency.py -v
+
+# start combined tracker (background PID/log under /tmp/vrcompanion-trackers/)
+./Tools/run_trackers.sh
+
+# foreground smoke
+Tools/FaceTracking/.venv/bin/python Tools/run_robotics_tracker.py --frames 15 --preview
+```
+
+Flags: `--face-smooth` / `--body-smooth`, `--min-confidence`, `--preview`, `--flush`, `--no-vision`.
+Stop: `kill $(cat /tmp/vrcompanion-trackers/robotics.pid)`.
+
+### Physics / sound / voice / latency (Unity)
+
+- **Physics:** `PhysicsTuning` applies gravity/solver defaults; bootstrap floor + props colliders; `PhysicsBall` dynamic smoke prop.
+- **Sound/voice:** `StubTtsService` plays procedural tones (`ToneSynthesizer`); `AudioMeter` for RMS/peak/dBFS (singing + tests).
+- **Latency:** `LatencyMeter` on face/body/vision packet intervals + Python `proc_ms`; on-screen HUD (**F3**).
+- **Image recognition:** OpenCV labels (`person_present`, `motion`, `hand_raised_hint`, …) + body gestures (`hands_up`, `t_pose`, lean).
 
 ## Still needs you
 

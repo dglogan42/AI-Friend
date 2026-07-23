@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
 using UnityEngine;
+using VRCompanion.Diagnostics;
 
 namespace VRCompanion.Speech
 {
@@ -18,8 +19,13 @@ namespace VRCompanion.Speech
 
         UdpClient _client;
         float _lastPacketTime = -999f;
+        float _lastArrival = -1f;
+        readonly LatencyMeter _intervalMeter = new LatencyMeter("face_interval");
+        readonly LatencyMeter _procMeter = new LatencyMeter("face_proc");
 
         public bool IsAvailable => _client != null && Time.unscaledTime - _lastPacketTime < staleAfterSeconds;
+        public LatencyMeter IntervalMeter => _intervalMeter;
+        public LatencyMeter ProcMeter => _procMeter;
         public event Action<FaceBlendshapeFrame> BlendshapesUpdated;
 
         void OnEnable()
@@ -65,15 +71,26 @@ namespace VRCompanion.Speech
             if (latest == null)
                 return;
 
-            _lastPacketTime = Time.unscaledTime;
+            float now = Time.unscaledTime;
+            _intervalMeter.RecordInterval(_lastArrival, now);
+            _lastArrival = now;
+            _lastPacketTime = now;
 
-            if (TryParse(latest, out var frame))
+            if (TryParse(latest, out var frame, out float procMs))
+            {
+                if (procMs > 0f)
+                    _procMeter.RecordMs(procMs);
                 BlendshapesUpdated?.Invoke(frame);
+            }
         }
 
         public static bool TryParse(byte[] json, out FaceBlendshapeFrame frame)
+            => TryParse(json, out frame, out _);
+
+        public static bool TryParse(byte[] json, out FaceBlendshapeFrame frame, out float procMs)
         {
             frame = FaceBlendshapeFrame.Empty;
+            procMs = 0f;
             try
             {
                 var packet = JsonUtility.FromJson<FacePacket>(System.Text.Encoding.UTF8.GetString(json));
@@ -87,6 +104,7 @@ namespace VRCompanion.Speech
                         scores[entry.n] = entry.s;
                 }
 
+                procMs = packet.proc_ms;
                 frame = new FaceBlendshapeFrame(packet.faceFound, scores);
                 return true;
             }
@@ -109,6 +127,7 @@ namespace VRCompanion.Speech
         {
             public long t;
             public bool faceFound;
+            public float proc_ms;
             public BlendshapeEntry[] shapes;
         }
     }

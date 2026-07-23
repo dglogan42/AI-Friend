@@ -64,3 +64,9 @@ Thumbs.db
 # Secrets — never commit API keys (see ~/.vrcompanion/secrets/ instead)
 *.env
 secrets/
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+

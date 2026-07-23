@@ -1,8 +1,16 @@
 # VR Companion
 
 A standalone OpenXR VR companion app (Unity 6000.0.79f1) — a cat-eared character with
-expressions, dialogue, and voice, set in a small hub/café/shop world. Targets desktop
-VR and Android/Quest via OpenXR.
+expressions, dialogue, and voice, set in a small hub/café/shop/**private** world. Targets
+desktop VR and Android/Quest via OpenXR.
+
+**Intimacy & NSFW are allowed by default** (`CompanionContentSettings` on the companion).
+Disable *Allow Intimate* / *Allow NSFW* in the Inspector for SFW demos.
+
+- **Outfits:** Default → Casual → Suggestive → Lingerie → Micro → Nude (`OutfitController`; hotkey **O**)
+- **Explicit acts:** tease, deep kiss, caress, oral, handjob, missionary, cowgirl, doggy, wall, climax
+  (`ExplicitInteractionController` — multi-step lines + pose offsets + outfit changes)
+- Rule-based dialogue + Realtime LLM instructions allow graphic adult roleplay when enabled
 
 ## Status
 
@@ -42,13 +50,11 @@ CompanionController                  — listen → think → express → speak 
                                         Linux stand-in, see BodyPoseFrame's BodyJoint set)
 ```
 
-Facial and body tracking each run as a separate Python process —
-`Tools/FaceTracking/webcam_face_tracker.py` (MediaPipe Face Landmarker) and
-`Tools/BodyTracking/webcam_body_tracker.py` (MediaPipe Pose, reduced to Kinect-style
-named joints) — that stream over UDP (ports 5555 and 5556 respectively); Unity only
-consumes the stream. Both scripts share the same Python environment
-(`Tools/FaceTracking/.venv`, which already has `opencv-python`/`mediapipe` installed —
-no separate venv needed for body tracking).
+Facial, body, and lightweight image recognition run from
+`Tools/run_robotics_tracker.py` (shared webcam → MediaPipe Face/Pose + OpenCV labels)
+over UDP **5555 / 5556 / 5557**. Packets include `proc_ms` latency. Prefer the combined
+process over separate face/body scripts (one camera cannot be opened twice). Python env:
+`Tools/FaceTracking/.venv`. Diagnostics HUD in Play Mode (**F3**).
 
 Nothing currently *consumes* `WebcamBodyTrackingSource`'s joint data to move the
 character's rig — it's wired up and streaming, at the same maturity `WebcamFaceTrackingSource`

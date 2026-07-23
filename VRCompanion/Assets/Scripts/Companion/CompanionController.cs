@@ -6,11 +6,13 @@ using VRCompanion.Dialogue;
 using VRCompanion.Scenes;
 using VRCompanion.Speech;
 using VRCompanion.Singing;
+using VRCompanion.Outfits;
+using VRCompanion.Intimacy;
 
 namespace VRCompanion
 {
     /// <summary>
-    /// Main loop: listen → understand → express → speak → optional scene change.
+    /// Main loop: listen → understand → express → speak → optional scene / outfit / explicit act.
     /// Works with stub ASR/TTS in Editor; swap interfaces for local models later.
     /// </summary>
     public sealed class CompanionController : MonoBehaviour
@@ -19,6 +21,8 @@ namespace VRCompanion
         [SerializeField] ExpressionController expression;
         [SerializeField] DialogueService dialogue;
         [SerializeField] SceneSwitcher scenes;
+        [SerializeField] OutfitController outfits;
+        [SerializeField] ExplicitInteractionController explicitActs;
         [SerializeField] MonoBehaviour asrBehaviour;
         [SerializeField] MonoBehaviour ttsBehaviour;
         [SerializeField] MonoBehaviour realtimeBehaviour;
@@ -27,6 +31,7 @@ namespace VRCompanion
         [Header("Input")]
         [SerializeField] Key pushToTalkKey = Key.Space;
         [SerializeField] Key singKey = Key.K;
+        [SerializeField] Key cycleOutfitKey = Key.O;
         [SerializeField] bool autoGreetOnStart = true;
 
         IAsrService _asr;
@@ -50,6 +55,11 @@ namespace VRCompanion
                 scenes = FindFirstObjectByType<SceneSwitcher>();
             if (singingRater == null)
                 singingRater = GetComponent<SingingRaterService>();
+            if (outfits == null)
+                outfits = GetComponent<OutfitController>() ?? gameObject.AddComponent<OutfitController>();
+            if (explicitActs == null)
+                explicitActs = GetComponent<ExplicitInteractionController>()
+                    ?? gameObject.AddComponent<ExplicitInteractionController>();
         }
 
         async void Start()
@@ -57,8 +67,10 @@ namespace VRCompanion
             _loopCts = new CancellationTokenSource();
             if (autoGreetOnStart)
             {
-                expression?.SetExpression(ExpressionId.Happy);
-                await _tts.SpeakAsync("Hi! I'm your companion. Press Space to talk.", _loopCts.Token);
+                expression?.SetExpression(ExpressionId.Flirty);
+                await _tts.SpeakAsync(
+                    "Hi! I'm your companion. Press Space to talk — we can keep it sweet or get intimate.",
+                    _loopCts.Token);
                 expression?.SetExpression(ExpressionId.Neutral, 0.2f);
             }
         }
@@ -73,6 +85,19 @@ namespace VRCompanion
                 _ = RunTurnAsync();
             if (keyboard[singKey].wasPressedThisFrame && !_busy && singingRater != null)
                 _ = RunSingingChallengeAsync();
+            if (keyboard[cycleOutfitKey].wasPressedThisFrame && !_busy && outfits != null)
+                CycleOutfitHotkey();
+        }
+
+        void CycleOutfitHotkey()
+        {
+            if (outfits == null)
+                return;
+            int next = ((int)outfits.Current + 1) % System.Enum.GetValues(typeof(OutfitId)).Length;
+            if (!outfits.TrySetOutfit((OutfitId)next))
+                outfits.TrySetOutfit(OutfitId.Default);
+            expression?.SetExpression(ExpressionId.Flirty);
+            Debug.Log($"[CompanionController] Outfit hotkey → {outfits.Current}");
         }
 
         public async Task RunSingingChallengeAsync()
@@ -141,9 +166,17 @@ namespace VRCompanion
                 if (reply.SwitchToScene.HasValue && scenes != null)
                     scenes.SwitchTo(reply.SwitchToScene.Value);
 
+                if (reply.Outfit.HasValue && outfits != null)
+                    outfits.TrySetOutfit(reply.Outfit.Value);
+
                 expression?.SetExpression(reply.Expression);
                 await _tts.SpeakAsync(reply.Text, ct);
-                expression?.SetExpression(ExpressionId.Neutral, 0.25f);
+
+                // Full multi-step explicit scene after the lead-in line.
+                if (reply.Act.HasValue && reply.Act.Value != ExplicitAct.None && explicitActs != null)
+                    await explicitActs.RunAsync(reply.Act.Value, ct);
+
+                expression?.SetExpression(ExpressionId.Intimate, 0.35f);
             }
             catch (TaskCanceledException)
             {

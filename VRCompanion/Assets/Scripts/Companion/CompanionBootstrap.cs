@@ -4,6 +4,12 @@ using VRCompanion.Scenes;
 using VRCompanion.Speech;
 using VRCompanion.Singing;
 using VRCompanion.Body;
+using VRCompanion.Vision;
+using VRCompanion.PhysicsTuning;
+using VRCompanion.Diagnostics;
+using VRCompanion.Content;
+using VRCompanion.Outfits;
+using VRCompanion.Intimacy;
 
 namespace VRCompanion
 {
@@ -29,11 +35,13 @@ namespace VRCompanion
         [ContextMenu("Build Stub Scene")]
         public void Build()
         {
+            PhysicsTuning.ApplyProjectDefaults();
             EnsureCamera();
             EnsureLight();
 
             var world = new GameObject("World");
             var floor = CreatePrimitive(PrimitiveType.Plane, "Floor", world.transform, Vector3.zero, new Vector3(2f, 1f, 2f), new Color(0.25f, 0.27f, 0.3f));
+            PhysicsTuning.ConfigureCollider(floor, isStatic: true);
 
             var locationsRoot = new GameObject("Locations");
             locationsRoot.transform.SetParent(world.transform, false);
@@ -41,20 +49,38 @@ namespace VRCompanion
             var hub = CreateLocation("Hub", locationsRoot.transform, new Color(0.35f, 0.4f, 0.5f), new Vector3(0f, 0.5f, 2.5f));
             var cafe = CreateLocation("Cafe", locationsRoot.transform, new Color(0.55f, 0.35f, 0.25f), new Vector3(-2.5f, 0.5f, 2.5f));
             var shop = CreateLocation("Shop", locationsRoot.transform, new Color(0.3f, 0.5f, 0.35f), new Vector3(2.5f, 0.5f, 2.5f));
+            var privateRoom = CreateLocation("Private", locationsRoot.transform, new Color(0.45f, 0.2f, 0.35f), new Vector3(0f, 0.5f, -2.5f));
+            // Soft ambient prop for private space
+            var bed = CreatePrimitive(PrimitiveType.Cube, "Daybed", privateRoom.transform, new Vector3(0f, 0.25f, 0f), new Vector3(1.6f, 0.35f, 0.9f), new Color(0.55f, 0.25f, 0.4f));
+            PhysicsTuning.ConfigureCollider(bed, isStatic: true);
 
-            // Simple props for flavour
-            CreatePrimitive(PrimitiveType.Cylinder, "CafeTable", cafe.transform, new Vector3(0f, 0.4f, 0f), new Vector3(0.8f, 0.4f, 0.8f), new Color(0.4f, 0.25f, 0.15f));
-            CreatePrimitive(PrimitiveType.Cube, "ShopCounter", shop.transform, new Vector3(0f, 0.5f, 0f), new Vector3(1.4f, 1f, 0.5f), new Color(0.45f, 0.4f, 0.3f));
-            CreatePrimitive(PrimitiveType.Cube, "HubSign", hub.transform, new Vector3(0f, 1.2f, 0f), new Vector3(1.2f, 0.3f, 0.1f), new Color(0.7f, 0.75f, 0.9f));
+            // Simple props for flavour — static colliders so they stay put in VR.
+            var table = CreatePrimitive(PrimitiveType.Cylinder, "CafeTable", cafe.transform, new Vector3(0f, 0.4f, 0f), new Vector3(0.8f, 0.4f, 0.8f), new Color(0.4f, 0.25f, 0.15f));
+            PhysicsTuning.ConfigureCollider(table, isStatic: true);
+            var counter = CreatePrimitive(PrimitiveType.Cube, "ShopCounter", shop.transform, new Vector3(0f, 0.5f, 0f), new Vector3(1.4f, 1f, 0.5f), new Color(0.45f, 0.4f, 0.3f));
+            PhysicsTuning.ConfigureCollider(counter, isStatic: true);
+            var sign = CreatePrimitive(PrimitiveType.Cube, "HubSign", hub.transform, new Vector3(0f, 1.2f, 0f), new Vector3(1.2f, 0.3f, 0.1f), new Color(0.7f, 0.75f, 0.9f));
+            PhysicsTuning.ConfigureCollider(sign, isStatic: true);
+
+            // Small dynamic prop for physics smoke testing in Play Mode.
+            var ball = CreatePrimitive(PrimitiveType.Sphere, "PhysicsBall", hub.transform, new Vector3(0.4f, 1.6f, 0.2f), Vector3.one * 0.12f, new Color(0.9f, 0.3f, 0.25f));
+            PhysicsTuning.ConfigureCollider(ball, isStatic: false, mass: 0.2f);
 
             var companionGo = new GameObject("Companion");
             companionGo.transform.position = new Vector3(0f, 0f, 1.5f);
+
+            // Intimacy + NSFW allowed by default (Inspector can disable for SFW demos).
+            companionGo.AddComponent<CompanionContentSettings>();
 
             var body = CreateCharacter(companionGo.transform);
             var expression = body.AddComponent<ExpressionController>();
             var dialogue = companionGo.AddComponent<DialogueService>();
             var asr = companionGo.AddComponent<StubAsrService>();
             var tts = companionGo.AddComponent<StubTtsService>();
+            var outfits = companionGo.AddComponent<OutfitController>();
+            outfits.SetCharacterRoot(body.transform);
+            var explicitActs = companionGo.AddComponent<ExplicitInteractionController>();
+            explicitActs.Configure(body.transform, expression, outfits, tts);
             var controller = companionGo.AddComponent<CompanionController>();
 
             var webcamFace = companionGo.AddComponent<WebcamFaceTrackingSource>();
@@ -65,6 +91,8 @@ namespace VRCompanion
             companionGo.AddComponent<SingingRaterService>();
             companionGo.AddComponent<KinectBodyTrackingSource>();
             companionGo.AddComponent<WebcamBodyTrackingSource>();
+            companionGo.AddComponent<WebcamImageRecognitionSource>();
+            companionGo.AddComponent<CompanionDiagnosticsHud>();
             CreateSingingVisualizer(companionGo.transform);
 
             var switcherGo = new GameObject("SceneSwitcher");
@@ -76,6 +104,7 @@ namespace VRCompanion
                 new SceneSwitcher.Location { Id = CompanionSceneId.Hub, DisplayName = "Hub", Root = hub, AmbientTint = new Color(0.85f, 0.9f, 1f) },
                 new SceneSwitcher.Location { Id = CompanionSceneId.Cafe, DisplayName = "Café", Root = cafe, AmbientTint = new Color(1f, 0.85f, 0.7f) },
                 new SceneSwitcher.Location { Id = CompanionSceneId.Shop, DisplayName = "Shop", Root = shop, AmbientTint = new Color(0.75f, 1f, 0.85f) },
+                new SceneSwitcher.Location { Id = CompanionSceneId.Private, DisplayName = "Private", Root = privateRoom, AmbientTint = new Color(1f, 0.55f, 0.7f) },
             });
 
             // Wire via reflection-free public flow: CompanionController fills missing refs in Awake.

@@ -117,6 +117,11 @@ namespace VRCompanion
                 ExpressionId.Bored => new Color(0.55f, 0.55f, 0.55f),
                 ExpressionId.Determined => new Color(0.9f, 0.3f, 0.25f),
                 ExpressionId.Embarrassed => new Color(1f, 0.6f, 0.7f),
+                ExpressionId.Affectionate => new Color(1f, 0.55f, 0.65f),
+                ExpressionId.Flirty => new Color(1f, 0.4f, 0.75f),
+                ExpressionId.Blush => new Color(1f, 0.5f, 0.55f),
+                ExpressionId.Seductive => new Color(0.85f, 0.25f, 0.55f),
+                ExpressionId.Intimate => new Color(0.95f, 0.35f, 0.5f),
                 _ => new Color(0.85f, 0.85f, 0.9f)
             };
         }

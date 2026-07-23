@@ -20,7 +20,13 @@ namespace VRCompanion
         Laughing,
         Bored,
         Determined,
-        Embarrassed
+        Embarrassed,
+        // Intimate / adult-capable affect (used when CompanionContentSettings allows it)
+        Affectionate,
+        Flirty,
+        Blush,
+        Seductive,
+        Intimate
     }
 
     /// <summary>

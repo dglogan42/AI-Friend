@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
 using UnityEngine;
+using VRCompanion.Diagnostics;
 
 namespace VRCompanion.Body
 {
@@ -23,8 +24,15 @@ namespace VRCompanion.Body
 
         UdpClient _client;
         float _lastPacketTime = -999f;
+        float _lastArrival = -1f;
+        readonly LatencyMeter _intervalMeter = new LatencyMeter("body_interval");
+        readonly LatencyMeter _procMeter = new LatencyMeter("body_proc");
+        Dictionary<string, float> _lastGestures = new Dictionary<string, float>();
 
         public bool IsAvailable => _client != null && Time.unscaledTime - _lastPacketTime < staleAfterSeconds;
+        public LatencyMeter IntervalMeter => _intervalMeter;
+        public LatencyMeter ProcMeter => _procMeter;
+        public IReadOnlyDictionary<string, float> LastGestures => _lastGestures;
         public event Action<BodyPoseFrame> PoseUpdated;
 
         void OnEnable()
@@ -70,15 +78,27 @@ namespace VRCompanion.Body
             if (latest == null)
                 return;
 
-            _lastPacketTime = Time.unscaledTime;
+            float now = Time.unscaledTime;
+            _intervalMeter.RecordInterval(_lastArrival, now);
+            _lastArrival = now;
+            _lastPacketTime = now;
 
-            if (TryParse(latest, out var frame))
+            if (TryParse(latest, out var frame, out float procMs))
+            {
+                if (procMs > 0f)
+                    _procMeter.RecordMs(procMs);
+                _lastGestures = BodyGestureRecognizer.Evaluate(frame);
                 PoseUpdated?.Invoke(frame);
+            }
         }
 
         public static bool TryParse(byte[] json, out BodyPoseFrame frame)
+            => TryParse(json, out frame, out _);
+
+        public static bool TryParse(byte[] json, out BodyPoseFrame frame, out float procMs)
         {
             frame = BodyPoseFrame.Empty;
+            procMs = 0f;
             try
             {
                 var packet = JsonUtility.FromJson<BodyPacket>(System.Text.Encoding.UTF8.GetString(json));
@@ -95,6 +115,7 @@ namespace VRCompanion.Body
                     }
                 }
 
+                procMs = packet.proc_ms;
                 frame = new BodyPoseFrame(packet.bodyFound, joints);
                 return true;
             }
@@ -120,6 +141,7 @@ namespace VRCompanion.Body
         {
             public long t;
             public bool bodyFound;
+            public float proc_ms;
             public JointEntry[] joints;
         }
     }
