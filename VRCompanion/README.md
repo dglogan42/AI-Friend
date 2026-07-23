@@ -31,6 +31,7 @@ CompanionController                  — listen → think → express → speak 
   │    ├─ WebcamFaceTrackingSource    (MediaPipe over UDP — real, tested)
   │    └─ ViveFaceTrackingSource      (stub — no hardware)
   ├─ SingingRaterService              (pitch/timing scoring against a reference melody)
+  │    └─ SingingVisualizer           (live oscilloscope waveform via LineRenderer)
   └─ KinectBodyTrackingSource         (stub — no hardware)
 ```
 
