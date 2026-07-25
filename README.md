@@ -35,7 +35,7 @@ Previews / video-reference stills: [`docs/character-references/CatEarsBoy/`](./d
 
 | Scope | License / terms |
 |-------|-----------------|
-| **Code** in this repo | [MIT](./LICENSE) — Copyright (c) 2026 David Logan |
+| **Code** in this repo | [MIT](./LICENSE) — Copyright (c) 2026 David Logan / AI-Friend contributors |
 | **Cat-ears Girl** (female VRM) | Creator **莲子酱**; Hub terms allow use/redistribution/alterations (see `VRCompanionAvatar/README.md`) |
 | **Yellow** (male model) | Creator **hannahciel25** — **attribution required**; **no redistribution**; **no alterations**; commercial use allowed under Hub terms |
 
@@ -44,4 +44,4 @@ Previews / video-reference stills: [`docs/character-references/CatEarsBoy/`](./d
 > Male companion model "Yellow" (Male Free Model) by **hannahciel25** —  
 > https://hub.vroid.com/en/characters/6436254208389465461/models/5132147205133357638
 
-Full third-party breakdown: [`LICENSE`](./LICENSE) (section *Third-party character models*).
+Full third-party breakdown: [`THIRD_PARTY_NOTICES.md`](./THIRD_PARTY_NOTICES.md).
