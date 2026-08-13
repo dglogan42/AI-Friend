@@ -21,6 +21,7 @@ They are **not** relicensed under MIT.
 | **Creator** | **Nilcat** ([@nilcat2024](https://sketchfab.com/nilcat2024)) |
 | **Preview** | https://sketchfab.com/3d-models/vrcvrmkurotodaily-wear-8e32aaa291964c09a1b262d7830fc732 |
 | **Sale** | [Booth Standard](https://vrmirage.booth.pm/items/8114335) · [Booth Deluxe](https://vrmirage.booth.pm/items/8103200) |
+| **VRChat try-on** | [Try【SE】Kuroto](https://vrchat.com/home/launch?worldId=wrld_3947e911-a481-451e-8cd5-9da36c7a7d3f) by Nilcat (`wrld_3947e911-…`, private) |
 | **Sketchfab download** | **No** (`isDownloadable: false`) |
 | **Local path** | `VRCompanion/Assets/StreamingAssets/Characters/Kuroto.vrm` (owner’s licensed file only) |
 
