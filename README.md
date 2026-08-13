@@ -19,41 +19,67 @@ Built two ways:
   (Unity 2022.3.22f1). Girl is imported; male is a documented drop-in. Creator asks
   VRChat uploads of Yellow to be **private only**.
 
-### Male model install (local only — not in git)
+### Buy extra models
 
-hannahciel25 **disallows redistribution** of Yellow. Drop your downloaded
-`.glb` / `.vrm` at:
+This repo does **not** include paid / non-redistributable meshes. Buy what you want, then drop the `.vrm` / `.glb` in `VRCompanion/Assets/StreamingAssets/Characters/` (name it `Kuroto.vrm`, `Gojo.vrm`, etc.). **H** cycles females, **J** cycles males, **G** switches gender.
 
-```text
-VRCompanion/Assets/StreamingAssets/Characters/CatEarsBoy.glb
-```
+**Shops**
 
-See [`CatEarsBoy/README.md`](./VRCompanion/Assets/Resources/Characters/CatEarsBoy/README.md).
+| Creator | Shop |
+|---|---|
+| **空猫 Nilcat** | [VRoid Hub](https://hub.vroid.com/en/users/36667771) · [Booth / VRMirage](https://vrmirage.booth.pm/) |
+| **ELI** | [Booth](https://eli-channel.booth.pm/) · [Ko-fi shop](https://ko-fi.com/eli_channel/shop) |
+| **HaiHan** | [Sketchfab](https://sketchfab.com/haikalha1508) · [Patreon](https://patreon.com/HaiHan3D) · [ko-fi](https://ko-fi.com/haihan3d) |
+| **Wnight** | [Sketchfab](https://sketchfab.com/Wnight) |
+| **hannahciel25** | [VRoid Hub](https://hub.vroid.com/en/users/85849208) |
 
-### Second female — Kuroto by Nilcat
+**Products**
 
-[Kuroto Daily Wear](https://hub.vroid.com/en/characters/2533837067352303068/models/5292605813764344136) by **[空猫 Nilcat](https://hub.vroid.com/en/users/36667771)** ([@Nilcatv](https://twitter.com/NilcatV)). VRoid Hub and [Sketchfab](https://sketchfab.com/3d-models/vrcvrmkurotodaily-wear-8e32aaa291964c09a1b262d7830fc732) are **view only** (cannot download on Hub). Buy the **digital** VRM on [Booth Standard](https://vrmirage.booth.pm/items/8114335) or [Deluxe (500)](https://vrmirage.booth.pm/items/8103200) (DE adds swimsuit, guitar, stand mic, mood toggle), then drop the file from **`VRMirage - VRM`** at:
+| Model | Buy / download |
+|---|---|
+| Kuroto SE | https://vrmirage.booth.pm/items/8114335 |
+| Kuroto DE (500) | https://vrmirage.booth.pm/items/8103200 |
+| Kuroto Hub (view) | https://hub.vroid.com/en/characters/2533837067352303068/models/5292605813764344136 |
+| Kuroto try-on (VRChat) | https://vrchat.com/home/launch?worldId=wrld_3947e911-a481-451e-8cd5-9da36c7a7d3f |
+| Other Nilcat characters | https://hub.vroid.com/en/users/36667771 |
+| Gojo student VRM (ELI) | https://eli-channel.booth.pm/items/5078143 |
+| Same on Ko-fi | https://ko-fi.com/s/05a5ba464a · shop: https://ko-fi.com/eli_channel/shop |
+| Gojo sculpt (Wnight, CC BY) | https://sketchfab.com/3d-models/gojo-satoru-jujutsu-kaisen-683a544b70d4418cb378f094aa55c8f1 |
+| More JJK on Sketchfab | https://sketchfab.com/tags/jujutsu-kaisen |
+| Qifrey (HaiHan, CC BY) | https://sketchfab.com/3d-models/witch-hat-atelier-qifrey-1c53ce54305347cfa3762d6613ab799b |
+| Yellow (hannahciel25) | https://hub.vroid.com/en/characters/6436254208389465461/models/5132147205133357638 |
+
+Follow each creator’s terms. Credit them if you use their mesh. More notes: [`docs/character-references/`](./docs/character-references/).
+
+### 導入のしかた / How to install
+
+BOOTHの「商品の発送について」は**箱の話**です。Kuroto も ELI の Gojo も **ダウンロード商品**です。倉庫・自宅・pixivFACTORY 発送ではありません。
+
+1. 上のリンクで買う（Digital / ダウンロード）。
+2. **入金確認**のあと、BOOTH → **[購入履歴](https://booth.pm/orders)** から zip を落とす。  
+   Ko-fi なら **Library / Purchases**。
+3. 解凍する。Nilcat（26.3.30〜）は VRM が **`VRMirage - VRM`** フォルダ、VRChat 用は `VRMirage - VRChat`。  
+   ELI は **`.vrm`** が本体。**`.vroid`** は VRoid Studio 用の編集ファイル（高い方のセット）。
+4. 使いたいファイルを次に置く（名前は表のとおり）：
 
 ```text
 VRCompanion/Assets/StreamingAssets/Characters/Kuroto.vrm
+VRCompanion/Assets/StreamingAssets/Characters/Gojo.vrm
+VRCompanion/Assets/StreamingAssets/Characters/Qifrey.glb
+VRCompanion/Assets/StreamingAssets/Characters/Yellow.glb
 ```
 
-If that file exists, female spawn uses Kuroto instead of Cat-ears Girl. Notes: [`docs/character-references/Kuroto/`](./docs/character-references/Kuroto/).
+5. Unity で Play。**G** = 女↔男、**H** = 女モデル切替、**J** = 男モデル切替。
 
-**Other Nilcat characters** (same drop-in folder, **H** to cycle): Seiya, Rincat, Komoe, Hitomi, Eimi, and more — full Hub links in [`docs/character-references/Nilcat/`](./docs/character-references/Nilcat/). Profile: [hub.vroid.com/en/users/36667771](https://hub.vroid.com/en/users/36667771).
+**日本語メモ**
 
-**Try-on (VRChat, private):** [Try【SE】Kuroto](https://vrchat.com/home/launch?worldId=wrld_3947e911-a481-451e-8cd5-9da36c7a7d3f) by Nilcat — Standard Edition fitting world, not a download.
+- VRoid Hub / Sketchfab の「見るだけ」ページからは落とせません。買うのは Booth / Ko-fi。
+- Kuroto の無料 zip はマイク FBX と手紙だけで、本体ではありません。
+- VRChat 試着ワールドは試着だけ。AI Friend 用の `.vrm` にはなりません。
+- 購入後の返金は各ショップ規約どおり（Nilcat / ELI は基本不可）。
+- メッシュは git に入れないでください。
 
-**Optional CC-BY male (Qifrey)** by **HaiHan** (@haikalha1508): [Witch Hat Atelier - Qifrey](https://sketchfab.com/3d-models/witch-hat-atelier-qifrey-1c53ce54305347cfa3762d6613ab799b) on Sketchfab. Drop `Qifrey.glb` in the same StreamingAssets folder (loader checks Qifrey **before** Yellow). Install notes: [`docs/character-references/Qifrey/`](./docs/character-references/Qifrey/). Fan model of a copyrighted character — keep local unless you accept that.
-
-**Jujutsu Kaisen–style males:** buy a **VRM** from **[ELI](https://eli-channel.booth.pm/items/5078143)** ([Ko-fi shop](https://ko-fi.com/eli_channel/shop) — student Gojo, personal use only) and drop `Gojo.vrm`. Or [Wnight’s CC-BY sculpt](https://sketchfab.com/3d-models/gojo-satoru-jujutsu-kaisen-683a544b70d4418cb378f094aa55c8f1) (likely unrigged). **J** cycles. We do **not** scrape [vrmodels.store](https://vrmodels.store/avatars/46300-unityvrchatjujutsu-kaisen-satomi-gojo-vrchat-avatar-by-floppiii.html). Notes: [`docs/character-references/JujutsuKaisen/`](./docs/character-references/JujutsuKaisen/).
-
-```sh
-export SKETCHFAB_TOKEN='…'   # Sketchfab → Settings → API token
-./VRCompanion/Tools/download_qifrey_sketchfab.sh
-```
-
-Previews / video-reference stills: [`docs/character-references/CatEarsBoy/`](./docs/character-references/CatEarsBoy/).
+English: after payment, download from Booth **Order history**, unzip, copy the `.vrm`/`.glb` into `StreamingAssets/Characters/` with the names above. Hub/Sketchfab view pages are not the shop.
 
 ## License & credits
 
@@ -71,6 +97,12 @@ Previews / video-reference stills: [`docs/character-references/CatEarsBoy/`](./d
 > https://hub.vroid.com/en/users/36667771  
 > Daily Wear: https://hub.vroid.com/en/characters/2533837067352303068/models/5292605813764344136  
 > [Booth SE](https://vrmirage.booth.pm/items/8114335) · [Booth DE](https://vrmirage.booth.pm/items/8103200) · [VN3](https://www.vn3.org/)
+
+**ELI Gojo credit (required when using eli_channel’s VRM):**
+
+> Male companion VRM “Gojo Satoru student ver. 2nd season” by **ELI** (eli_channel) —  
+> https://eli-channel.booth.pm/items/5078143 · https://ko-fi.com/eli_channel/shop  
+> Personal use only; do not redistribute.
 
 **Wnight Gojo credit (required when using that sculpt):**
 
