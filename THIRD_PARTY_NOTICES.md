@@ -18,12 +18,13 @@ They are **not** relicensed under MIT.
 | | |
 |--|--|
 | **Title** | 【VRC/VRM】Kuroto（黒糖くろとう）【Daily Wear】 |
-| **Creator** | **Nilcat** ([@nilcat2024](https://sketchfab.com/nilcat2024)) |
+| **Creator** | **Nilcat** (空猫) — [Sketchfab](https://sketchfab.com/nilcat2024) · [X @Nilcatv](https://twitter.com/NilcatV) · [VRoid Hub](https://hub.vroid.com/en/users/36667771) |
 | **Preview** | https://sketchfab.com/3d-models/vrcvrmkurotodaily-wear-8e32aaa291964c09a1b262d7830fc732 |
-| **Sale** | [Booth Standard](https://vrmirage.booth.pm/items/8114335) · [Booth Deluxe](https://vrmirage.booth.pm/items/8103200) |
-| **VRChat try-on** | [Try【SE】Kuroto](https://vrchat.com/home/launch?worldId=wrld_3947e911-a481-451e-8cd5-9da36c7a7d3f) by Nilcat (`wrld_3947e911-…`, private) |
+| **Sale** | [Booth SE](https://vrmirage.booth.pm/items/8114335) · [Booth DE, 500](https://vrmirage.booth.pm/items/8103200) (swimsuit, guitar, stand mic, mood toggle) |
+| **VRChat try-on** | [Try【SE】Kuroto](https://vrchat.com/home/launch?worldId=wrld_3947e911-a481-451e-8cd5-9da36c7a7d3f) (`wrld_3947e911-…`, private) |
+| **License** | Purchaser terms + [VN3](https://www.vn3.org/) — commercial / derivatives allowed; **no refunds**; **do not redistribute the zip** |
 | **Sketchfab download** | **No** (`isDownloadable: false`) |
-| **Local path** | `VRCompanion/Assets/StreamingAssets/Characters/Kuroto.vrm` (owner’s licensed file only) |
+| **Local path** | `StreamingAssets/Characters/Kuroto.vrm` from zip folder **`VRMirage - VRM`** |
 
 **Credit line:**
 

@@ -32,7 +32,7 @@ See [`CatEarsBoy/README.md`](./VRCompanion/Assets/Resources/Characters/CatEarsBo
 
 ### Second female — Kuroto by Nilcat
 
-[【VRC/VRM】Kuroto（黒糖くろとう）【Daily Wear】](https://sketchfab.com/3d-models/vrcvrmkurotodaily-wear-8e32aaa291964c09a1b262d7830fc732) by **[Nilcat](https://sketchfab.com/nilcat2024)**. Sketchfab is a **preview only** (not downloadable). Buy the VRM on [Booth Standard](https://vrmirage.booth.pm/items/8114335) or [Deluxe](https://vrmirage.booth.pm/items/8103200), then drop it at:
+[【VRC/VRM】Kuroto（黒糖くろとう）【Daily Wear】](https://sketchfab.com/3d-models/vrcvrmkurotodaily-wear-8e32aaa291964c09a1b262d7830fc732) by **[Nilcat](https://sketchfab.com/nilcat2024)** (空猫 / [@Nilcatv](https://twitter.com/NilcatV)). Sketchfab is a **preview only**. Buy the **digital** VRM on [Booth Standard](https://vrmirage.booth.pm/items/8114335) or [Deluxe (500)](https://vrmirage.booth.pm/items/8103200) (DE adds swimsuit, guitar, stand mic, mood toggle), then drop the file from **`VRMirage - VRM`** at:
 
 ```text
 VRCompanion/Assets/StreamingAssets/Characters/Kuroto.vrm
@@ -63,9 +63,9 @@ Previews / video-reference stills: [`docs/character-references/CatEarsBoy/`](./d
 
 **Kuroto credit (required when using Nilcat’s mesh):**
 
-> Female companion “Kuroto（黒糖くろとう）Daily Wear” by **Nilcat** —  
+> Female companion “Kuroto（黒糖くろとう）” by **Nilcat** (空猫 / @Nilcatv) —  
 > https://sketchfab.com/3d-models/vrcvrmkurotodaily-wear-8e32aaa291964c09a1b262d7830fc732  
-> Preview on Sketchfab; VRM sold on [Booth](https://vrmirage.booth.pm/items/8114335).
+> [Booth SE](https://vrmirage.booth.pm/items/8114335) · [Booth DE](https://vrmirage.booth.pm/items/8103200) · [VN3](https://www.vn3.org/)
 
 **Qifrey credit (required when using HaiHan’s mesh):**
 
