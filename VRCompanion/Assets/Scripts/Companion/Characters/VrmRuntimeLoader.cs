@@ -30,6 +30,11 @@ namespace VRCompanion.Characters
             return new[]
             {
                 env,
+                // Sketchfab CC-BY drop-in: HaiHan "Witch Hat Atelier - Qifrey"
+                Path.Combine(streaming, "Characters", "Qifrey.glb"),
+                Path.Combine(streaming, "Characters", "Qifrey.vrm"),
+                Path.Combine(models, "Qifrey.glb"),
+                Path.Combine(models, "Qifrey.vrm"),
                 // StreamingAssets (preferred for drop-in without Editor reimport)
                 Path.Combine(streaming, "Characters", "CatEarsBoy.glb"),
                 Path.Combine(streaming, "Characters", "CatEarsBoy.vrm"),

@@ -29,6 +29,13 @@ VRCompanion/Assets/StreamingAssets/Characters/CatEarsBoy.glb
 
 See [`CatEarsBoy/README.md`](./VRCompanion/Assets/Resources/Characters/CatEarsBoy/README.md).
 
+**Optional CC-BY male (Qifrey):** HaiHan’s [Witch Hat Atelier - Qifrey](https://sketchfab.com/3d-models/witch-hat-atelier-qifrey-1c53ce54305347cfa3762d6613ab799b) on Sketchfab. Drop `Qifrey.glb` in the same StreamingAssets folder (loader checks Qifrey **before** Yellow). Install notes: [`docs/character-references/Qifrey/`](./docs/character-references/Qifrey/). Fan model of a copyrighted character — keep local unless you accept that.
+
+```sh
+export SKETCHFAB_TOKEN='…'   # Sketchfab → Settings → API token
+./VRCompanion/Tools/download_qifrey_sketchfab.sh
+```
+
 Previews / video-reference stills: [`docs/character-references/CatEarsBoy/`](./docs/character-references/CatEarsBoy/).
 
 ## License & credits

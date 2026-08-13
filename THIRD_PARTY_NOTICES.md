@@ -34,6 +34,23 @@ They are **not** relicensed under MIT.
 The binary model file must **not** be redistributed with this repository or as a
 standalone download. Obtain it from VRoid Hub under the creator's terms.
 
+## Male (optional) — Qifrey (Sketchfab)
+
+| | |
+|--|--|
+| **Title** | Witch Hat Atelier - Qifrey |
+| **Creator** | **HaiHan** (@haikalha1508) |
+| **Page** | https://sketchfab.com/3d-models/witch-hat-atelier-qifrey-1c53ce54305347cfa3762d6613ab799b |
+| **License** | [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/) — credit required; commercial use allowed |
+| **Local path** | `VRCompanion/Assets/StreamingAssets/Characters/Qifrey.glb` (or `~/.vrcompanion/models/Qifrey.glb`) |
+| **IP note** | Fan depiction of *Witch Hat Atelier* (Kamome Shirahama / Kodansha). Mesh license ≠ character rights. |
+
+**Credit line:**
+
+> Male companion mesh “Witch Hat Atelier - Qifrey” by HaiHan (@haikalha1508) —  
+> https://sketchfab.com/3d-models/witch-hat-atelier-qifrey-1c53ce54305347cfa3762d6613ab799b  
+> CC BY 4.0.
+
 ## Other packages
 
 VRChat SDK packages under `VRCompanionAvatar/Packages/com.vrchat.*` are governed
