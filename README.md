@@ -2,12 +2,13 @@
 
 A dual-character VR companion:
 
-| | Female | Male |
-|--|--------|------|
-| **Name** | Cat-ears Girl | **Yellow** (Male Free Model) |
-| **Creator** | 莲子酱 | **[hannahciel25](https://hub.vroid.com/en/users/85849208)** (credit required) |
-| **Source** | VRoid Hub | [VRoid Hub model page](https://hub.vroid.com/en/characters/6436254208389465461/models/5132147205133357638) |
-| **Hotkey** | default | **G** to switch |
+| | Female | Male (optional CC-BY) | Male (VRoid, local only) |
+|--|--------|------------------------|--------------------------|
+| **Name** | Cat-ears Girl | **Qifrey** | **Yellow** (Male Free Model) |
+| **Creator** | 莲子酱 | **[HaiHan](https://sketchfab.com/haikalha1508)** (@haikalha1508) | **[hannahciel25](https://hub.vroid.com/en/users/85849208)** |
+| **Source** | VRoid Hub | [Sketchfab — Witch Hat Atelier - Qifrey](https://sketchfab.com/3d-models/witch-hat-atelier-qifrey-1c53ce54305347cfa3762d6613ab799b) | [VRoid Hub model page](https://hub.vroid.com/en/characters/6436254208389465461/models/5132147205133357638) |
+| **License** | Hub terms (redistribution allowed) | **[CC BY 4.0](https://creativecommons.org/licenses/by/4.0/)** — credit HaiHan | Attribution required; **no redistribution**; **no alterations** |
+| **Hotkey** | default | **G** (preferred if `Qifrey.glb` is present) | **G** |
 
 Built two ways:
 
@@ -29,7 +30,7 @@ VRCompanion/Assets/StreamingAssets/Characters/CatEarsBoy.glb
 
 See [`CatEarsBoy/README.md`](./VRCompanion/Assets/Resources/Characters/CatEarsBoy/README.md).
 
-**Optional CC-BY male (Qifrey):** HaiHan’s [Witch Hat Atelier - Qifrey](https://sketchfab.com/3d-models/witch-hat-atelier-qifrey-1c53ce54305347cfa3762d6613ab799b) on Sketchfab. Drop `Qifrey.glb` in the same StreamingAssets folder (loader checks Qifrey **before** Yellow). Install notes: [`docs/character-references/Qifrey/`](./docs/character-references/Qifrey/). Fan model of a copyrighted character — keep local unless you accept that.
+**Optional CC-BY male (Qifrey)** by **HaiHan** (@haikalha1508): [Witch Hat Atelier - Qifrey](https://sketchfab.com/3d-models/witch-hat-atelier-qifrey-1c53ce54305347cfa3762d6613ab799b) on Sketchfab. Drop `Qifrey.glb` in the same StreamingAssets folder (loader checks Qifrey **before** Yellow). Install notes: [`docs/character-references/Qifrey/`](./docs/character-references/Qifrey/). Fan model of a copyrighted character — keep local unless you accept that.
 
 ```sh
 export SKETCHFAB_TOKEN='…'   # Sketchfab → Settings → API token
@@ -44,9 +45,16 @@ Previews / video-reference stills: [`docs/character-references/CatEarsBoy/`](./d
 |-------|-----------------|
 | **Code** in this repo | [MIT](./LICENSE) — Copyright (c) 2026 David Logan / AI-Friend contributors |
 | **Cat-ears Girl** (female VRM) | Creator **莲子酱**; Hub terms allow use/redistribution/alterations (see `VRCompanionAvatar/README.md`) |
+| **Qifrey** (optional male mesh) | Creator **HaiHan** (@haikalha1508) — **[CC BY 4.0](https://creativecommons.org/licenses/by/4.0/)**, credit required |
 | **Yellow** (male model) | Creator **hannahciel25** — **attribution required**; **no redistribution**; **no alterations**; commercial use allowed under Hub terms |
 
-**Male model credit (required when using Yellow):**
+**Qifrey credit (required when using HaiHan’s mesh):**
+
+> Male companion mesh “Witch Hat Atelier - Qifrey” by **HaiHan** (@haikalha1508) —  
+> https://sketchfab.com/3d-models/witch-hat-atelier-qifrey-1c53ce54305347cfa3762d6613ab799b  
+> Licensed under [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/). Support: [Patreon](https://patreon.com/HaiHan3D) · [ko-fi](https://ko-fi.com/haihan3d) · Instagram [@haihan_3d](https://www.instagram.com/haihan_3d)
+
+**Yellow credit (required when using Yellow):**
 
 > Male companion model "Yellow" (Male Free Model) by **hannahciel25** —  
 > https://hub.vroid.com/en/characters/6436254208389465461/models/5132147205133357638
