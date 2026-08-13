@@ -58,30 +58,110 @@ namespace VRCompanion.Characters
         }
 
         // Back-compat alias
+        /// <summary>ASCII drop-in stems for 空猫 Nilcat Hub characters (see docs/character-references/Nilcat).</summary>
+        public static readonly string[] NilcatFemaleStems =
+        {
+            "Kuroto", "KurotoSwimsuit",
+            "Seiya", "SeiyaSwimsuit",
+            "Rincat",
+            "HaiyuZero",
+            "Komoe", "KomoeMemorial",
+            "YumemiMero",
+            "Eliolot",
+            "Hitomi",
+            "Sitari",
+            "Yobipai",
+            "ShiuMoku",
+            "NinerNine",
+            "Yukai",
+            "Minne",
+            "Philorty",
+            "MikageTantian",
+            "Eimi",
+        };
+
+        public const string FemaleVariantPrefsKey = "VRCompanion.FemaleVariant";
+
         public static string[] FemaleModelCandidatePaths()
         {
             string home = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
             string env = Environment.GetEnvironmentVariable("VRCOMPANION_FEMALE_VRM")
                          ?? Environment.GetEnvironmentVariable("VRCOMPANION_FEMALE_MODEL");
-            string streaming = Application.streamingAssetsPath;
+            string streaming = Path.Combine(Application.streamingAssetsPath, "Characters");
             string models = Path.Combine(home, ".vrcompanion", "models");
-            string resourcesKuroto = Path.Combine(Application.dataPath, "Resources", "Characters", "Kuroto");
+            string resources = Path.Combine(Application.dataPath, "Resources", "Characters");
 
-            return new[]
+            var list = new System.Collections.Generic.List<string>();
+            if (!string.IsNullOrEmpty(env))
             {
-                env,
-                Path.Combine(streaming, "Characters", "Kuroto.vrm"),
-                Path.Combine(streaming, "Characters", "Kuroto.glb"),
-                Path.Combine(models, "Kuroto.vrm"),
-                Path.Combine(models, "Kuroto.glb"),
-                Path.Combine(resourcesKuroto, "Kuroto.vrm"),
-                Path.Combine(resourcesKuroto, "Kuroto.glb"),
-                Path.Combine(Directory.GetParent(Application.dataPath)?.FullName ?? "", "Kuroto.vrm"),
-            };
+                if (File.Exists(env))
+                    list.Add(env);
+                else
+                    AddStemPaths(list, env, streaming, models, resources);
+            }
+
+            string preferred = PlayerPrefs.GetString(FemaleVariantPrefsKey, "");
+            if (!string.IsNullOrEmpty(preferred) &&
+                !preferred.Equals("builtin", StringComparison.OrdinalIgnoreCase))
+                AddStemPaths(list, preferred, streaming, models, resources);
+
+            foreach (var stem in NilcatFemaleStems)
+                AddStemPaths(list, stem, streaming, models, resources);
+
+            AppendLooseFiles(list, streaming);
+            AppendLooseFiles(list, models);
+            return list.ToArray();
+        }
+
+        static void AddStemPaths(
+            System.Collections.Generic.List<string> list,
+            string stem,
+            string streaming,
+            string models,
+            string resources)
+        {
+            if (string.IsNullOrEmpty(stem))
+                return;
+            stem = stem.Trim().Trim('"', '\'');
+            foreach (var dir in new[] { streaming, models, Path.Combine(resources, stem) })
+            {
+                list.Add(Path.Combine(dir, stem + ".vrm"));
+                list.Add(Path.Combine(dir, stem + ".glb"));
+            }
+        }
+
+        static readonly string[] MaleFileHints = { "qifrey", "yellow", "catearsboy" };
+
+        static void AppendLooseFiles(System.Collections.Generic.List<string> list, string dir)
+        {
+            if (string.IsNullOrEmpty(dir) || !Directory.Exists(dir))
+                return;
+            foreach (var file in Directory.GetFiles(dir))
+            {
+                string ext = Path.GetExtension(file)?.ToLowerInvariant();
+                if (ext != ".vrm" && ext != ".glb")
+                    continue;
+                string name = Path.GetFileNameWithoutExtension(file).ToLowerInvariant();
+                bool male = false;
+                foreach (var hint in MaleFileHints)
+                {
+                    if (name.Contains(hint))
+                    {
+                        male = true;
+                        break;
+                    }
+                }
+                if (!male)
+                    list.Add(file);
+            }
         }
 
         public static string FindExistingFemaleVrmPath()
         {
+            string preferred = PlayerPrefs.GetString(FemaleVariantPrefsKey, "");
+            if (preferred.Equals("builtin", StringComparison.OrdinalIgnoreCase))
+                return null;
+
             foreach (var p in FemaleModelCandidatePaths())
             {
                 if (string.IsNullOrEmpty(p))
@@ -90,6 +170,44 @@ namespace VRCompanion.Characters
                     return p;
             }
             return null;
+        }
+
+        /// <summary>Installed female drop-ins plus "builtin" (Cat-ears Girl prefab).</summary>
+        public static string[] ListFemaleVariantIds()
+        {
+            var ids = new System.Collections.Generic.List<string> { "builtin" };
+            var seen = new System.Collections.Generic.HashSet<string>(StringComparer.OrdinalIgnoreCase) { "builtin" };
+            foreach (var p in FemaleModelCandidatePaths())
+            {
+                if (string.IsNullOrEmpty(p) || !File.Exists(p))
+                    continue;
+                string id = Path.GetFileNameWithoutExtension(p);
+                if (seen.Add(id))
+                    ids.Add(id);
+            }
+            return ids.ToArray();
+        }
+
+        public static string CycleFemaleVariant()
+        {
+            var ids = ListFemaleVariantIds();
+            string cur = PlayerPrefs.GetString(FemaleVariantPrefsKey, "");
+            int i = 0;
+            for (int n = 0; n < ids.Length; n++)
+            {
+                if (ids[n].Equals(cur, StringComparison.OrdinalIgnoreCase))
+                {
+                    i = n;
+                    break;
+                }
+            }
+            // If a file is loaded with empty prefs, treat as first non-builtin if present.
+            if (string.IsNullOrEmpty(cur) && ids.Length > 1 && FindExistingFemaleVrmPath() != null)
+                i = 1;
+            string next = ids[(i + 1) % ids.Length];
+            PlayerPrefs.SetString(FemaleVariantPrefsKey, next);
+            PlayerPrefs.Save();
+            return next;
         }
 
         public static GameObject TryLoadFemaleVrm(Transform parent)

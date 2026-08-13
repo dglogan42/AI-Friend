@@ -40,6 +40,8 @@ VRCompanion/Assets/StreamingAssets/Characters/Kuroto.vrm
 
 If that file exists, female spawn uses Kuroto instead of Cat-ears Girl. Notes: [`docs/character-references/Kuroto/`](./docs/character-references/Kuroto/).
 
+**Other Nilcat characters** (same drop-in folder, **H** to cycle): Seiya, Rincat, Komoe, Hitomi, Eimi, and more — full Hub links in [`docs/character-references/Nilcat/`](./docs/character-references/Nilcat/). Profile: [hub.vroid.com/en/users/36667771](https://hub.vroid.com/en/users/36667771).
+
 **Try-on (VRChat, private):** [Try【SE】Kuroto](https://vrchat.com/home/launch?worldId=wrld_3947e911-a481-451e-8cd5-9da36c7a7d3f) by Nilcat — Standard Edition fitting world, not a download.
 
 **Optional CC-BY male (Qifrey)** by **HaiHan** (@haikalha1508): [Witch Hat Atelier - Qifrey](https://sketchfab.com/3d-models/witch-hat-atelier-qifrey-1c53ce54305347cfa3762d6613ab799b) on Sketchfab. Drop `Qifrey.glb` in the same StreamingAssets folder (loader checks Qifrey **before** Yellow). Install notes: [`docs/character-references/Qifrey/`](./docs/character-references/Qifrey/). Fan model of a copyrighted character — keep local unless you accept that.

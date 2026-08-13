@@ -57,6 +57,6 @@ VRCompanion/Assets/StreamingAssets/Characters/Kuroto.vrm
 export VRCOMPANION_FEMALE_MODEL=/path/to/Kuroto.vrm
 ```
 
-If that file exists, female spawn uses Kuroto instead of Cat-ears Girl. **G** still toggles female ↔ male.
+If that file exists, female spawn uses Kuroto instead of Cat-ears Girl. **G** still toggles female ↔ male. **H** cycles other installed [Nilcat characters](../Nilcat/).
 
 Do **not** commit the binary. Do not scrape Sketchfab. VRChat upload of this avatar is a **separate** VCC project (lilToon 2.x, Modular Avatar, Make It MMD, VRCFT Jerry templates) — not AI Friend.

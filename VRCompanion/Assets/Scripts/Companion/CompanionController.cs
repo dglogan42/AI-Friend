@@ -15,7 +15,7 @@ namespace VRCompanion
     /// <summary>
     /// Main loop: listen → understand → express → speak → optional scene / outfit / explicit act.
     /// Works with stub ASR/TTS in Editor; swap interfaces for local models later.
-    /// Hotkeys: Space talk, K sing, O outfit, G switch gender (reloads body next session / live swap).
+    /// Hotkeys: Space talk, K sing, O outfit, G switch gender, H cycle female (Nilcat drop-ins).
     /// </summary>
     public sealed class CompanionController : MonoBehaviour
     {
@@ -36,6 +36,7 @@ namespace VRCompanion
         [SerializeField] Key singKey = Key.K;
         [SerializeField] Key cycleOutfitKey = Key.O;
         [SerializeField] Key switchGenderKey = Key.G;
+        [SerializeField] Key cycleFemaleKey = Key.H;
         [SerializeField] bool autoGreetOnStart = true;
 
         IAsrService _asr;
@@ -104,6 +105,8 @@ namespace VRCompanion
                 CycleOutfitHotkey();
             if (keyboard[switchGenderKey].wasPressedThisFrame && !_busy)
                 _ = SwitchGenderAsync();
+            if (keyboard[cycleFemaleKey].wasPressedThisFrame && !_busy)
+                _ = CycleFemaleVariantAsync();
         }
 
         void CycleOutfitHotkey()
@@ -115,6 +118,48 @@ namespace VRCompanion
                 outfits.TrySetOutfit(OutfitId.Default);
             expression?.SetExpression(ExpressionId.Flirty);
             Debug.Log($"[CompanionController] Outfit hotkey → {outfits.Current}");
+        }
+
+        /// <summary>
+        /// Cycle Cat-ears Girl ↔ installed Nilcat VRMs (Kuroto, Seiya, …). Reloads if currently female.
+        /// </summary>
+        public async Task CycleFemaleVariantAsync()
+        {
+            if (_busy || characterProfile == null)
+                return;
+            string next = VrmRuntimeLoader.CycleFemaleVariant();
+            Debug.Log($"[CompanionController] Female variant → {next}");
+            if (characterProfile.IsMale)
+                return;
+
+            _busy = true;
+            try
+            {
+                if (_bodyRoot == null)
+                {
+                    var found = transform.Find("Body");
+                    if (found != null)
+                        _bodyRoot = found;
+                }
+                if (_bodyRoot != null)
+                {
+                    Object.Destroy(_bodyRoot.gameObject);
+                    _bodyRoot = null;
+                }
+                var body = CompanionBootstrap.CreateCharacter(transform, characterProfile);
+                _bodyRoot = body.transform;
+                expression = body.GetComponent<ExpressionController>()
+                    ?? body.AddComponent<ExpressionController>();
+                outfits?.SetCharacterRoot(body.transform);
+                explicitActs?.Configure(body.transform, expression, outfits, _tts);
+                expression.SetExpression(ExpressionId.Curious);
+                if (_tts != null)
+                    await _tts.SpeakAsync($"Switched to {next}.", _loopCts?.Token ?? default);
+            }
+            finally
+            {
+                _busy = false;
+            }
         }
 
         /// <summary>
