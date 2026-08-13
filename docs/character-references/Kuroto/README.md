@@ -16,6 +16,19 @@ Optional extra girl. **Not a free Sketchfab download** (`isDownloadable: false`)
 > https://sketchfab.com/3d-models/vrcvrmkurotodaily-wear-8e32aaa291964c09a1b262d7830fc732  
 > Preview on Sketchfab; mesh sold on Booth (VRMirage).
 
+## How BOOTH delivers this (not a parcel)
+
+That shipping FAQ is for **physical** items. Kuroto is listed as **Digital**:
+
+| BOOTH type | Kuroto? |
+|---|---|
+| 倉庫から発送 / 自宅から発送 / pixivFACTORY | No — those are boxes |
+| **ダウンロード商品** | **Yes** — after payment, files appear in **購入履歴** and stay downloadable |
+
+**Free gift** (no purchase): [microphone FBX + letter](https://booth.pm/downloadables/8583129?variation_id=13580561) (~6 MB). That is **not** the full avatar.
+
+**Paid Standard (¥2,999):** VRChat model + **VRM** + FBX + extras. After 入金確認, open [購入履歴](https://accounts.pixiv.net/) / BOOTH **Purchases** and download. Unzip; the VRM is usually under something like `VRMirage - VRM`.
+
 ## Install (only if you bought it)
 
 Copy your licensed `.vrm` (or `.glb`) to one of:
