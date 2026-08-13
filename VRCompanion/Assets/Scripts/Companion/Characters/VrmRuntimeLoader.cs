@@ -17,44 +17,42 @@ namespace VRCompanion.Characters
         /// <summary>
         /// Candidate paths for the male Yellow model (first existing file wins).
         /// </summary>
+        /// <summary>Optional male drop-in stems (Qifrey/Yellow plus user-owned JJK-style files).</summary>
+        public static readonly string[] MaleStems =
+        {
+            "Qifrey", "Yellow", "CatEarsBoy",
+            "Gojo", "Geto", "Nanami", "Itadori", "Yuji", "Megumi", "Toji",
+            "Sukuna", "Yuta", "Todo", "Choso",
+        };
+
+        public const string MaleVariantPrefsKey = "VRCompanion.MaleVariant";
+
         public static string[] MaleModelCandidatePaths()
         {
             string home = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
             string env = Environment.GetEnvironmentVariable("VRCOMPANION_MALE_VRM")
                          ?? Environment.GetEnvironmentVariable("VRCOMPANION_MALE_MODEL");
-
-            string streaming = Application.streamingAssetsPath;
-            string resourcesBoy = Path.Combine(Application.dataPath, "Resources", "Characters", "CatEarsBoy");
+            string streaming = Path.Combine(Application.streamingAssetsPath, "Characters");
             string models = Path.Combine(home, ".vrcompanion", "models");
+            string resources = Path.Combine(Application.dataPath, "Resources", "Characters");
 
-            return new[]
+            var list = new System.Collections.Generic.List<string>();
+            if (!string.IsNullOrEmpty(env))
             {
-                env,
-                // Sketchfab CC-BY drop-in: HaiHan "Witch Hat Atelier - Qifrey"
-                Path.Combine(streaming, "Characters", "Qifrey.glb"),
-                Path.Combine(streaming, "Characters", "Qifrey.vrm"),
-                Path.Combine(models, "Qifrey.glb"),
-                Path.Combine(models, "Qifrey.vrm"),
-                // StreamingAssets (preferred for drop-in without Editor reimport)
-                Path.Combine(streaming, "Characters", "CatEarsBoy.glb"),
-                Path.Combine(streaming, "Characters", "CatEarsBoy.vrm"),
-                Path.Combine(streaming, "Characters", "Yellow.glb"),
-                Path.Combine(streaming, "Characters", "Yellow.vrm"),
-                // Resources folder (may also be used after Editor import)
-                Path.Combine(resourcesBoy, "CatEarsBoy.glb"),
-                Path.Combine(resourcesBoy, "CatEarsBoy.vrm"),
-                Path.Combine(resourcesBoy, "Yellow.glb"),
-                Path.Combine(resourcesBoy, "Yellow.vrm"),
-                // User home cache
-                Path.Combine(models, "CatEarsBoy.glb"),
-                Path.Combine(models, "CatEarsBoy.vrm"),
-                Path.Combine(models, "Yellow.glb"),
-                Path.Combine(models, "Yellow.vrm"),
-                // Accidental drop at project root (dev convenience)
-                Path.Combine(Directory.GetParent(Application.dataPath)?.FullName ?? "", "2531419525577818593.glb"),
-                Path.Combine(Directory.GetParent(Application.dataPath)?.FullName ?? "", "CatEarsBoy.glb"),
-                Path.Combine(Directory.GetParent(Application.dataPath)?.FullName ?? "", "Yellow.glb"),
-            };
+                if (File.Exists(env))
+                    list.Add(env);
+                else
+                    AddStemPaths(list, env, streaming, models, resources);
+            }
+
+            string preferred = PlayerPrefs.GetString(MaleVariantPrefsKey, "");
+            if (!string.IsNullOrEmpty(preferred))
+                AddStemPaths(list, preferred, streaming, models, resources);
+
+            foreach (var stem in MaleStems)
+                AddStemPaths(list, stem, streaming, models, resources);
+
+            return list.ToArray();
         }
 
         // Back-compat alias
@@ -130,7 +128,12 @@ namespace VRCompanion.Characters
             }
         }
 
-        static readonly string[] MaleFileHints = { "qifrey", "yellow", "catearsboy" };
+        static readonly string[] MaleFileHints =
+        {
+            "qifrey", "yellow", "catearsboy",
+            "gojo", "geto", "nanami", "itadori", "yuji", "megumi", "toji",
+            "sukuna", "yuta", "todo", "choso",
+        };
 
         static void AppendLooseFiles(System.Collections.Generic.List<string> list, string dir)
         {
@@ -289,6 +292,42 @@ namespace VRCompanion.Characters
                 var task = GltfUtility.LoadAsync(path, awaiter);
                 return task.GetAwaiter().GetResult();
             }
+        }
+
+        public static string[] ListMaleVariantIds()
+        {
+            var ids = new System.Collections.Generic.List<string>();
+            var seen = new System.Collections.Generic.HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            foreach (var p in MaleModelCandidatePaths())
+            {
+                if (string.IsNullOrEmpty(p) || !File.Exists(p))
+                    continue;
+                string id = Path.GetFileNameWithoutExtension(p);
+                if (seen.Add(id))
+                    ids.Add(id);
+            }
+            return ids.ToArray();
+        }
+
+        public static string CycleMaleVariant()
+        {
+            var ids = ListMaleVariantIds();
+            if (ids.Length == 0)
+                return "";
+            string cur = PlayerPrefs.GetString(MaleVariantPrefsKey, "");
+            int i = 0;
+            for (int n = 0; n < ids.Length; n++)
+            {
+                if (ids[n].Equals(cur, StringComparison.OrdinalIgnoreCase))
+                {
+                    i = n;
+                    break;
+                }
+            }
+            string next = ids[(i + 1) % ids.Length];
+            PlayerPrefs.SetString(MaleVariantPrefsKey, next);
+            PlayerPrefs.Save();
+            return next;
         }
 
         public static GameObject TryLoadMaleVrm(Transform parent)

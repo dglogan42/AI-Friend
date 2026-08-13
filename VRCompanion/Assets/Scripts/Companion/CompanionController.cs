@@ -37,6 +37,7 @@ namespace VRCompanion
         [SerializeField] Key cycleOutfitKey = Key.O;
         [SerializeField] Key switchGenderKey = Key.G;
         [SerializeField] Key cycleFemaleKey = Key.H;
+        [SerializeField] Key cycleMaleKey = Key.J;
         [SerializeField] bool autoGreetOnStart = true;
 
         IAsrService _asr;
@@ -107,6 +108,8 @@ namespace VRCompanion
                 _ = SwitchGenderAsync();
             if (keyboard[cycleFemaleKey].wasPressedThisFrame && !_busy)
                 _ = CycleFemaleVariantAsync();
+            if (keyboard[cycleMaleKey].wasPressedThisFrame && !_busy)
+                _ = CycleMaleVariantAsync();
         }
 
         void CycleOutfitHotkey()
@@ -130,6 +133,50 @@ namespace VRCompanion
             string next = VrmRuntimeLoader.CycleFemaleVariant();
             Debug.Log($"[CompanionController] Female variant → {next}");
             if (characterProfile.IsMale)
+                return;
+
+            _busy = true;
+            try
+            {
+                if (_bodyRoot == null)
+                {
+                    var found = transform.Find("Body");
+                    if (found != null)
+                        _bodyRoot = found;
+                }
+                if (_bodyRoot != null)
+                {
+                    Object.Destroy(_bodyRoot.gameObject);
+                    _bodyRoot = null;
+                }
+                var body = CompanionBootstrap.CreateCharacter(transform, characterProfile);
+                _bodyRoot = body.transform;
+                expression = body.GetComponent<ExpressionController>()
+                    ?? body.AddComponent<ExpressionController>();
+                outfits?.SetCharacterRoot(body.transform);
+                explicitActs?.Configure(body.transform, expression, outfits, _tts);
+                expression.SetExpression(ExpressionId.Curious);
+                if (_tts != null)
+                    await _tts.SpeakAsync($"Switched to {next}.", _loopCts?.Token ?? default);
+            }
+            finally
+            {
+                _busy = false;
+            }
+        }
+
+        public async Task CycleMaleVariantAsync()
+        {
+            if (_busy || characterProfile == null)
+                return;
+            string next = VrmRuntimeLoader.CycleMaleVariant();
+            if (string.IsNullOrEmpty(next))
+            {
+                Debug.Log("[CompanionController] No male VRM/GLB drop-ins installed.");
+                return;
+            }
+            Debug.Log($"[CompanionController] Male variant → {next}");
+            if (characterProfile.IsFemale)
                 return;
 
             _busy = true;

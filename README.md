@@ -46,6 +46,8 @@ If that file exists, female spawn uses Kuroto instead of Cat-ears Girl. Notes: [
 
 **Optional CC-BY male (Qifrey)** by **HaiHan** (@haikalha1508): [Witch Hat Atelier - Qifrey](https://sketchfab.com/3d-models/witch-hat-atelier-qifrey-1c53ce54305347cfa3762d6613ab799b) on Sketchfab. Drop `Qifrey.glb` in the same StreamingAssets folder (loader checks Qifrey **before** Yellow). Install notes: [`docs/character-references/Qifrey/`](./docs/character-references/Qifrey/). Fan model of a copyrighted character — keep local unless you accept that.
 
+**Jujutsu Kaisen–style males** (Gojo, Geto, Nanami, Itadori, …): drop your own **VRM/GLB** as `Gojo.vrm` etc. **J** cycles them. We do **not** download [vrmodels.store Unity packages](https://vrmodels.store/avatars/46300-unityvrchatjujutsu-kaisen-satomi-gojo-vrchat-avatar-by-floppiii.html) (login-walled, not VRM, JJK IP). Notes: [`docs/character-references/JujutsuKaisen/`](./docs/character-references/JujutsuKaisen/).
+
 ```sh
 export SKETCHFAB_TOKEN='…'   # Sketchfab → Settings → API token
 ./VRCompanion/Tools/download_qifrey_sketchfab.sh
