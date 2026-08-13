@@ -5,8 +5,8 @@ A dual-character VR companion:
 | | Female (built-in) | Female (optional) | Male (optional CC-BY) | Male (VRoid, local only) |
 |--|-------------------|-------------------|------------------------|--------------------------|
 | **Name** | Cat-ears Girl | **Kuroto（黒糖くろとう）** Daily Wear | **Qifrey** | **Yellow** (Male Free Model) |
-| **Creator** | 莲子酱 | **[Nilcat](https://sketchfab.com/nilcat2024)** | **[HaiHan](https://sketchfab.com/haikalha1508)** (@haikalha1508) | **[hannahciel25](https://hub.vroid.com/en/users/85849208)** |
-| **Source** | VRoid Hub | [Sketchfab preview](https://sketchfab.com/3d-models/vrcvrmkurotodaily-wear-8e32aaa291964c09a1b262d7830fc732) · buy on [Booth](https://vrmirage.booth.pm/items/8114335) | [Sketchfab — Qifrey](https://sketchfab.com/3d-models/witch-hat-atelier-qifrey-1c53ce54305347cfa3762d6613ab799b) | [VRoid Hub](https://hub.vroid.com/en/characters/6436254208389465461/models/5132147205133357638) |
+| **Creator** | 莲子酱 | **[空猫 Nilcat](https://hub.vroid.com/en/users/36667771)** | **[HaiHan](https://sketchfab.com/haikalha1508)** (@haikalha1508) | **[hannahciel25](https://hub.vroid.com/en/users/85849208)** |
+| **Source** | VRoid Hub | [Hub Daily Wear](https://hub.vroid.com/en/characters/2533837067352303068/models/5292605813764344136) (view only) · [Booth](https://vrmirage.booth.pm/items/8114335) | [Sketchfab — Qifrey](https://sketchfab.com/3d-models/witch-hat-atelier-qifrey-1c53ce54305347cfa3762d6613ab799b) | [VRoid Hub](https://hub.vroid.com/en/characters/6436254208389465461/models/5132147205133357638) |
 | **License** | Hub terms (redistribution allowed) | Commercial VRM — **not** a free Sketchfab download; credit **Nilcat** | **[CC BY 4.0](https://creativecommons.org/licenses/by/4.0/)** — credit HaiHan | Attribution required; **no redistribution**; **no alterations** |
 | **Hotkey** | default | default if `Kuroto.vrm` is present | **G** (if `Qifrey.glb` is present) | **G** |
 
@@ -32,7 +32,7 @@ See [`CatEarsBoy/README.md`](./VRCompanion/Assets/Resources/Characters/CatEarsBo
 
 ### Second female — Kuroto by Nilcat
 
-[【VRC/VRM】Kuroto（黒糖くろとう）【Daily Wear】](https://sketchfab.com/3d-models/vrcvrmkurotodaily-wear-8e32aaa291964c09a1b262d7830fc732) by **[Nilcat](https://sketchfab.com/nilcat2024)** (空猫 / [@Nilcatv](https://twitter.com/NilcatV)). Sketchfab is a **preview only**. Buy the **digital** VRM on [Booth Standard](https://vrmirage.booth.pm/items/8114335) or [Deluxe (500)](https://vrmirage.booth.pm/items/8103200) (DE adds swimsuit, guitar, stand mic, mood toggle), then drop the file from **`VRMirage - VRM`** at:
+[Kuroto Daily Wear](https://hub.vroid.com/en/characters/2533837067352303068/models/5292605813764344136) by **[空猫 Nilcat](https://hub.vroid.com/en/users/36667771)** ([@Nilcatv](https://twitter.com/NilcatV)). VRoid Hub and [Sketchfab](https://sketchfab.com/3d-models/vrcvrmkurotodaily-wear-8e32aaa291964c09a1b262d7830fc732) are **view only** (cannot download on Hub). Buy the **digital** VRM on [Booth Standard](https://vrmirage.booth.pm/items/8114335) or [Deluxe (500)](https://vrmirage.booth.pm/items/8103200) (DE adds swimsuit, guitar, stand mic, mood toggle), then drop the file from **`VRMirage - VRM`** at:
 
 ```text
 VRCompanion/Assets/StreamingAssets/Characters/Kuroto.vrm
@@ -63,8 +63,9 @@ Previews / video-reference stills: [`docs/character-references/CatEarsBoy/`](./d
 
 **Kuroto credit (required when using Nilcat’s mesh):**
 
-> Female companion “Kuroto（黒糖くろとう）” by **Nilcat** (空猫 / @Nilcatv) —  
-> https://sketchfab.com/3d-models/vrcvrmkurotodaily-wear-8e32aaa291964c09a1b262d7830fc732  
+> Female companion “Kuroto（黒糖くろとう）” by **空猫 Nilcat** —  
+> https://hub.vroid.com/en/users/36667771  
+> Daily Wear: https://hub.vroid.com/en/characters/2533837067352303068/models/5292605813764344136  
 > [Booth SE](https://vrmirage.booth.pm/items/8114335) · [Booth DE](https://vrmirage.booth.pm/items/8103200) · [VN3](https://www.vn3.org/)
 
 **Qifrey credit (required when using HaiHan’s mesh):**

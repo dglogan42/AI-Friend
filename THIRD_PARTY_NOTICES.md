@@ -18,7 +18,9 @@ They are **not** relicensed under MIT.
 | | |
 |--|--|
 | **Title** | 【VRC/VRM】Kuroto（黒糖くろとう）【Daily Wear】 |
-| **Creator** | **Nilcat** (空猫) — [Sketchfab](https://sketchfab.com/nilcat2024) · [X @Nilcatv](https://twitter.com/NilcatV) · [VRoid Hub](https://hub.vroid.com/en/users/36667771) |
+| **Creator** | **空猫 Nilcat** — [VRoid Hub profile](https://hub.vroid.com/en/users/36667771) · [X @Nilcatv](https://twitter.com/NilcatV) · [Sketchfab](https://sketchfab.com/nilcat2024) |
+| **Hub Daily Wear** | https://hub.vroid.com/en/characters/2533837067352303068/models/5292605813764344136 (**cannot download** on Hub) |
+| **Hub Swimsuit** | https://hub.vroid.com/en/characters/2533837067352303068/models/6541390543572980883 |
 | **Preview** | https://sketchfab.com/3d-models/vrcvrmkurotodaily-wear-8e32aaa291964c09a1b262d7830fc732 |
 | **Sale** | [Booth SE](https://vrmirage.booth.pm/items/8114335) · [Booth DE, 500](https://vrmirage.booth.pm/items/8103200) (swimsuit, guitar, stand mic, mood toggle) |
 | **VRChat try-on** | [Try【SE】Kuroto](https://vrchat.com/home/launch?worldId=wrld_3947e911-a481-451e-8cd5-9da36c7a7d3f) (`wrld_3947e911-…`, private) |
@@ -28,8 +30,9 @@ They are **not** relicensed under MIT.
 
 **Credit line:**
 
-> Female companion “Kuroto（黒糖くろとう）Daily Wear” by Nilcat —  
-> https://sketchfab.com/3d-models/vrcvrmkurotodaily-wear-8e32aaa291964c09a1b262d7830fc732
+> Female companion “Kuroto（黒糖くろとう）” by 空猫 Nilcat —  
+> https://hub.vroid.com/en/users/36667771  
+> https://hub.vroid.com/en/characters/2533837067352303068/models/5292605813764344136
 
 Do **not** scrape or commit this mesh.
 

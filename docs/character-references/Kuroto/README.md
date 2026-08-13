@@ -4,7 +4,9 @@ Optional extra girl by **空猫 Nilcat**. Sketchfab is a **preview only** (`isDo
 
 | | |
 |--|--|
-| **Creator** | **Nilcat** (空猫) — [Sketchfab](https://sketchfab.com/nilcat2024) · [X @Nilcatv](https://twitter.com/NilcatV) · [VRoid Hub](https://hub.vroid.com/en/users/36667771) · Nilcatv@gmail.com |
+| **Creator** | **空猫 Nilcat** — [VRoid Hub](https://hub.vroid.com/en/users/36667771) · [X @Nilcatv](https://twitter.com/NilcatV) · [Sketchfab](https://sketchfab.com/nilcat2024) · Nilcatv@gmail.com |
+| **Hub Daily Wear** | [【Daily Wear】Kuroto](https://hub.vroid.com/en/characters/2533837067352303068/models/5292605813764344136) — **view only**, not downloadable on Hub |
+| **Hub Swimsuit** | [【Swimsuit】Kuroto](https://hub.vroid.com/en/characters/2533837067352303068/models/6541390543572980883) |
 | **Preview** | [【VRC/VRM】Kuroto Daily Wear](https://sketchfab.com/3d-models/vrcvrmkurotodaily-wear-8e32aaa291964c09a1b262d7830fc732) |
 | **Buy SE** | [【標準版】Kuroto](https://vrmirage.booth.pm/items/8114335) |
 | **Buy DE** | [豪華版 Deluxe（Booth 500）](https://vrmirage.booth.pm/items/8103200) — stock checked every 48h |
@@ -13,7 +15,9 @@ Optional extra girl by **空猫 Nilcat**. Sketchfab is a **preview only** (`isDo
 
 ## Credit (required)
 
-> Female companion “Kuroto（黒糖くろとう）” by **Nilcat** (空猫 / @Nilcatv) —  
+> Female companion “Kuroto（黒糖くろとう）” by **空猫 Nilcat** —  
+> VRoid Hub: https://hub.vroid.com/en/users/36667771  
+> Daily Wear: https://hub.vroid.com/en/characters/2533837067352303068/models/5292605813764344136  
 > Preview: https://sketchfab.com/3d-models/vrcvrmkurotodaily-wear-8e32aaa291964c09a1b262d7830fc732  
 > Sold by VRMirage on Booth. VN3 + creator terms. No refunds after purchase.
 
