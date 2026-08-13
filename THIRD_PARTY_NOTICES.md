@@ -13,6 +13,24 @@ They are **not** relicensed under MIT.
 | **Hub terms (as of import)** | Avatar use: Allow · Redistribution: Allow · Alterations: Allow · Attribution: not required |
 | **Details** | See `VRCompanionAvatar/README.md` |
 
+## Female (optional) — Kuroto（黒糖くろとう）Daily Wear
+
+| | |
+|--|--|
+| **Title** | 【VRC/VRM】Kuroto（黒糖くろとう）【Daily Wear】 |
+| **Creator** | **Nilcat** ([@nilcat2024](https://sketchfab.com/nilcat2024)) |
+| **Preview** | https://sketchfab.com/3d-models/vrcvrmkurotodaily-wear-8e32aaa291964c09a1b262d7830fc732 |
+| **Sale** | [Booth Standard](https://vrmirage.booth.pm/items/8114335) · [Booth Deluxe](https://vrmirage.booth.pm/items/8103200) |
+| **Sketchfab download** | **No** (`isDownloadable: false`) |
+| **Local path** | `VRCompanion/Assets/StreamingAssets/Characters/Kuroto.vrm` (owner’s licensed file only) |
+
+**Credit line:**
+
+> Female companion “Kuroto（黒糖くろとう）Daily Wear” by Nilcat —  
+> https://sketchfab.com/3d-models/vrcvrmkurotodaily-wear-8e32aaa291964c09a1b262d7830fc732
+
+Do **not** scrape or commit this mesh.
+
 ## Male — Yellow (Male Free Model)
 
 | | |

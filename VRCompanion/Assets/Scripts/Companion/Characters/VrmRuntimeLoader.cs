@@ -58,6 +58,46 @@ namespace VRCompanion.Characters
         }
 
         // Back-compat alias
+        public static string[] FemaleModelCandidatePaths()
+        {
+            string home = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
+            string env = Environment.GetEnvironmentVariable("VRCOMPANION_FEMALE_VRM")
+                         ?? Environment.GetEnvironmentVariable("VRCOMPANION_FEMALE_MODEL");
+            string streaming = Application.streamingAssetsPath;
+            string models = Path.Combine(home, ".vrcompanion", "models");
+            string resourcesKuroto = Path.Combine(Application.dataPath, "Resources", "Characters", "Kuroto");
+
+            return new[]
+            {
+                env,
+                Path.Combine(streaming, "Characters", "Kuroto.vrm"),
+                Path.Combine(streaming, "Characters", "Kuroto.glb"),
+                Path.Combine(models, "Kuroto.vrm"),
+                Path.Combine(models, "Kuroto.glb"),
+                Path.Combine(resourcesKuroto, "Kuroto.vrm"),
+                Path.Combine(resourcesKuroto, "Kuroto.glb"),
+                Path.Combine(Directory.GetParent(Application.dataPath)?.FullName ?? "", "Kuroto.vrm"),
+            };
+        }
+
+        public static string FindExistingFemaleVrmPath()
+        {
+            foreach (var p in FemaleModelCandidatePaths())
+            {
+                if (string.IsNullOrEmpty(p))
+                    continue;
+                if (File.Exists(p))
+                    return p;
+            }
+            return null;
+        }
+
+        public static GameObject TryLoadFemaleVrm(Transform parent)
+        {
+            string path = FindExistingFemaleVrmPath();
+            return path == null ? null : LoadFromPath(path, parent);
+        }
+
         public static string[] MaleVrmCandidatePaths() => MaleModelCandidatePaths();
 
         public static string FindExistingMaleVrmPath()

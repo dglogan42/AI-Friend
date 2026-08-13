@@ -165,6 +165,19 @@ namespace VRCompanion
                 return fallback;
             }
 
+            // Optional second female: Nilcat "Kuroto" VRM (Booth; not in git).
+            if (profile.IsFemale)
+            {
+                var kuroto = VrmRuntimeLoader.TryLoadFemaleVrm(parent);
+                if (kuroto != null)
+                {
+                    Debug.Log(
+                        "[CompanionBootstrap] Female body: Kuroto（黒糖くろとう） Daily Wear by Nilcat — " +
+                        "https://sketchfab.com/3d-models/vrcvrmkurotodaily-wear-8e32aaa291964c09a1b262d7830fc732");
+                    return kuroto;
+                }
+            }
+
             var prefab = Resources.Load<GameObject>(profile.ResourcesPath);
             if (prefab != null)
             {
