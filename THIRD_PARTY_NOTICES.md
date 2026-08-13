@@ -57,6 +57,40 @@ Do **not** scrape or commit this mesh.
 The binary model file must **not** be redistributed with this repository or as a
 standalone download. Obtain it from VRoid Hub under the creator's terms.
 
+## Male (optional) — Gojo Satoru student VRM (ELI)
+
+| | |
+|--|--|
+| **Title** | [VR CHAT / VTUBER] Gojo Satoru student ver. 2nd season (VRM) |
+| **Creator** | **ELI** (eli_channel) — [Booth](https://eli-channel.booth.pm/items/5078143) · [Ko-fi shop](https://ko-fi.com/eli_channel/shop) · [Ko-fi item](https://ko-fi.com/s/05a5ba464a) · [X @eli_channel00](https://twitter.com/eli_channel00) |
+| **Formats** | `.vrm` (¥2,500) · `.vroid` + VRM (¥5,000) |
+| **Terms** | Personal / VTuber / VRChat / animation only. **No** resale, redistribution, or commercial use. |
+| **Local path** | `StreamingAssets/Characters/Gojo.vrm` |
+| **IP** | Fan VRoid port; character © Gege Akutami / Shueisha / MAPPA |
+
+**Credit line:**
+
+> Male companion VRM “Gojo Satoru student ver. 2nd season” by ELI (eli_channel) —  
+> https://eli-channel.booth.pm/items/5078143 · https://ko-fi.com/eli_channel/shop
+
+## Male (optional) — Gojo Satoru (Sketchfab, Wnight)
+
+| | |
+|--|--|
+| **Title** | Gojo Satoru - Jujutsu Kaisen |
+| **Creator** | **Wnight** ([@Wnight](https://sketchfab.com/Wnight)) |
+| **Page** | https://sketchfab.com/3d-models/gojo-satoru-jujutsu-kaisen-683a544b70d4418cb378f094aa55c8f1 |
+| **License** | [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/) — credit required |
+| **Local path** | `StreamingAssets/Characters/Gojo.glb` |
+| **Notes** | ~22k hand-painted tris; likely **unrigged**. Tag index: https://sketchfab.com/tags/jujutsu-kaisen |
+| **IP** | Fan depiction of JJK © Gege Akutami / Shueisha / MAPPA |
+
+**Credit line:**
+
+> Male companion sculpt “Gojo Satoru - Jujutsu Kaisen” by Wnight —  
+> https://sketchfab.com/3d-models/gojo-satoru-jujutsu-kaisen-683a544b70d4418cb378f094aa55c8f1  
+> CC BY 4.0.
+
 ## Male (optional) — Qifrey (Sketchfab)
 
 | | |

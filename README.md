@@ -46,7 +46,7 @@ If that file exists, female spawn uses Kuroto instead of Cat-ears Girl. Notes: [
 
 **Optional CC-BY male (Qifrey)** by **HaiHan** (@haikalha1508): [Witch Hat Atelier - Qifrey](https://sketchfab.com/3d-models/witch-hat-atelier-qifrey-1c53ce54305347cfa3762d6613ab799b) on Sketchfab. Drop `Qifrey.glb` in the same StreamingAssets folder (loader checks Qifrey **before** Yellow). Install notes: [`docs/character-references/Qifrey/`](./docs/character-references/Qifrey/). Fan model of a copyrighted character — keep local unless you accept that.
 
-**Jujutsu Kaisen–style males** (Gojo, Geto, Nanami, Itadori, …): drop your own **VRM/GLB** as `Gojo.vrm` etc. **J** cycles them. We do **not** download [vrmodels.store Unity packages](https://vrmodels.store/avatars/46300-unityvrchatjujutsu-kaisen-satomi-gojo-vrchat-avatar-by-floppiii.html) (login-walled, not VRM, JJK IP). Notes: [`docs/character-references/JujutsuKaisen/`](./docs/character-references/JujutsuKaisen/).
+**Jujutsu Kaisen–style males:** buy a **VRM** from **[ELI](https://eli-channel.booth.pm/items/5078143)** ([Ko-fi shop](https://ko-fi.com/eli_channel/shop) — student Gojo, personal use only) and drop `Gojo.vrm`. Or [Wnight’s CC-BY sculpt](https://sketchfab.com/3d-models/gojo-satoru-jujutsu-kaisen-683a544b70d4418cb378f094aa55c8f1) (likely unrigged). **J** cycles. We do **not** scrape [vrmodels.store](https://vrmodels.store/avatars/46300-unityvrchatjujutsu-kaisen-satomi-gojo-vrchat-avatar-by-floppiii.html). Notes: [`docs/character-references/JujutsuKaisen/`](./docs/character-references/JujutsuKaisen/).
 
 ```sh
 export SKETCHFAB_TOKEN='…'   # Sketchfab → Settings → API token
@@ -71,6 +71,12 @@ Previews / video-reference stills: [`docs/character-references/CatEarsBoy/`](./d
 > https://hub.vroid.com/en/users/36667771  
 > Daily Wear: https://hub.vroid.com/en/characters/2533837067352303068/models/5292605813764344136  
 > [Booth SE](https://vrmirage.booth.pm/items/8114335) · [Booth DE](https://vrmirage.booth.pm/items/8103200) · [VN3](https://www.vn3.org/)
+
+**Wnight Gojo credit (required when using that sculpt):**
+
+> Male companion sculpt “Gojo Satoru - Jujutsu Kaisen” by **Wnight** —  
+> https://sketchfab.com/3d-models/gojo-satoru-jujutsu-kaisen-683a544b70d4418cb378f094aa55c8f1  
+> [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/).
 
 **Qifrey credit (required when using HaiHan’s mesh):**
 
